@@ -1,0 +1,133 @@
+# $Id$
+#
+# LANGUAGE translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  uc_ip2country.module: n/a
+#  uc_ip2country.info: n/a
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2008-08-18 14:20-0500\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: uc_ip2country.module:48
+msgid "Detects Country of user based on IP address."
+msgstr ""
+
+#: uc_ip2country.module:52
+msgid "Configuration settings for the uc_ip2country module."
+msgstr ""
+
+#: uc_ip2country.module:78;181
+msgid "Database updated"
+msgstr ""
+
+#: uc_ip2country.module:103
+msgid "IP to Country Settings"
+msgstr ""
+
+#: uc_ip2country.module:104
+msgid "Configure the IP/Country settings"
+msgstr ""
+
+#: uc_ip2country.module:112
+msgid "Update Database"
+msgstr ""
+
+#: uc_ip2country.module:184
+msgid "@rows rows affected."
+msgstr ""
+
+#: uc_ip2country.module:187
+msgid "The IP to Country database has been updated.  "
+msgstr ""
+
+#: uc_ip2country.module:205
+msgid "Database Updates"
+msgstr ""
+
+#: uc_ip2country.module:213
+msgid "Log database updates to watchdog"
+msgstr ""
+
+#: uc_ip2country.module:222
+msgid "Database update frequency"
+msgstr ""
+
+#: uc_ip2country.module:225
+msgid "Database will be automatically updated via cron.php.  Cron must be enabled for this to work.  Default period is 1 week (604800 seconds)."
+msgstr ""
+
+#: uc_ip2country.module:233
+msgid "Update"
+msgstr ""
+
+#: uc_ip2country.module:234
+msgid "The IP to Country Database may be updated manually by pressing the Update button below.  Note, this may take several minutes."
+msgstr ""
+
+#: uc_ip2country.module:241
+msgid "Debug Preferences"
+msgstr ""
+
+#: uc_ip2country.module:242
+msgid "Set debugging values"
+msgstr ""
+
+#: uc_ip2country.module:250
+msgid "Admin Debug"
+msgstr ""
+
+#: uc_ip2country.module:252
+msgid "Allows admin to specify an IP Address or Country to use for location-based currency."
+msgstr ""
+
+#: uc_ip2country.module:258
+msgid "Bypass IP/Country check for administrator and manually enter"
+msgstr ""
+
+#: uc_ip2country.module:260
+msgid "Country"
+msgstr ""
+
+#: uc_ip2country.module:260
+msgid "IP Address"
+msgstr ""
+
+#: uc_ip2country.module:264
+msgid "Dummy Country to use for testing"
+msgstr ""
+
+#: uc_ip2country.module:268
+msgid "Dummy IP to use for testing"
+msgstr ""
+
+#: uc_ip2country.module:78;181;0
+msgid "uc_ip2country"
+msgstr ""
+
+#: uc_ip2country.module:62
+msgid "administer ip2country"
+msgstr ""
+
+#: uc_ip2country.info:0
+msgid "IP-based determination of Country"
+msgstr ""
+
+#: uc_ip2country.info:0
+msgid "Determines country the user is located in, based on IP address"
+msgstr ""
+
+#: uc_ip2country.info:0
+msgid "Ubercart - extra"
+msgstr ""
+
