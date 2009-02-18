@@ -97,7 +97,9 @@ release.
 
 Limitations
 ===========
-Because the database update takes so long to run, you may have to increase the allowed cron run time.  This requires editing includes/common.inc and changing the time in the function drupal_cron_run() from 240 to 10*60.
+Because the database update takes so long to run, you may have to increase
+the allowed cron run time.  This requires editing includes/common.inc and
+changing the time in the function drupal_cron_run() from 240 to 10*60.
 
 
 
