@@ -1,0 +1,16 @@
+/* $Id$ */
+
+#dbthrobber.working {
+  background-image: url(/misc/throbber.gif);
+  background-repeat: no-repeat;
+  background-position: 100% -20px;
+  color: green;
+}
+
+#dbthrobber.completed {
+  color: green;
+}
+
+#dbthrobber.message {
+  color: red;
+}

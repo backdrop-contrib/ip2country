@@ -198,6 +198,7 @@ function _uc_ip2country_update($arg) {
  */
 function uc_ip2country_admin_settings() {
   uc_add_js(drupal_get_path('module', 'uc_ip2country') .'/uc_ip2country.js');
+  drupal_add_css(drupal_get_path('module', 'uc_ip2country') .'/uc_ip2country.css');
 
   /* Container for database update preference forms */
   $form['uc_ip2country_database_update'] = array(
@@ -232,7 +233,7 @@ function uc_ip2country_admin_settings() {
     '#type'         => 'button',
     '#value'        => t('Update'),
     '#prefix'       => '<div>'. t('The IP to Country Database may be updated manually by pressing the Update button below.  Note, this may take several minutes.') .'</div>',
-    '#suffix'       => '<span id="dbthrobber" style="color: red">Database last updated on '. date('n/j/Y', $update_time) .' at '. date('H:i:s T', $update_time) .'</span>',
+    '#suffix'       => '<span id="dbthrobber" class="message">Database last updated on '. date('n/j/Y', $update_time) .' at '. date('H:i:s T', $update_time) .'</span>',
   );
 
   /* Container for debugging preference forms */
