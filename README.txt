@@ -64,12 +64,20 @@ from the IP address, the ISO 3166 2-character country code is stored in the
 Drupal $user object as $user->country_iso_code_2.  If no country can be
 determined, this member variable is left unset.
 
+Alternatively, a function is provides so that you may look up the country
+from within your own code, for your own use.  The way to use this is:
+
+  $ip = $_SERVER['REMOTE_ADDR'];
+  $country_code = uc_ip2country_get_country($ip);
+
+
 The database used is maintained by ARIN, the American Registry for Internet
 Numbers (http://www.arin.net/about_us/index.html), which is one of the five
 official Regional Internet Registries (RIR) responsible for assigning IP
 addresses.  The claim is the database is 98% accurate, with most of the
 problems coming from users in less-developed countries.  Regardless, there's
-no more-authoritive source of this information.
+no more-authoritive source of this information.  Although the default RIR used
+is ARIN, an admin menu allows you to choose any of the five.
 
 If you have cron set up for your Drupal site, this IP to Country database will
 be automatically updated at a frequency determined by the admin menu at
