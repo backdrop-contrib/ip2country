@@ -3,14 +3,14 @@
 # LANGUAGE translation of Drupal (general)
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 # Generated from files:
-#  uc_ip2country.module: n/a
-#  uc_ip2country.info: n/a
+#  uc_ip2country.module,v 1.2 2009/02/26 21:29:29 tr
+#  uc_ip2country.info,v 1.1 2009/02/18 00:53:11 tr
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2008-08-18 14:20-0500\n"
+"POT-Creation-Date: 2009-02-26 22:39-0600\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -27,8 +27,8 @@ msgstr ""
 msgid "Configuration settings for the uc_ip2country module."
 msgstr ""
 
-#: uc_ip2country.module:78;181
-msgid "Database updated"
+#: uc_ip2country.module:78
+msgid "Database updated from @registry registry."
 msgstr ""
 
 #: uc_ip2country.module:103
@@ -43,72 +43,96 @@ msgstr ""
 msgid "Update Database"
 msgstr ""
 
+#: uc_ip2country.module:149;304
+msgid "Using DEBUG value for Country - @country"
+msgstr ""
+
+#: uc_ip2country.module:181
+msgid "Database updated"
+msgstr ""
+
 #: uc_ip2country.module:184
 msgid "@rows rows affected."
 msgstr ""
 
 #: uc_ip2country.module:187
-msgid "The IP to Country database has been updated.  "
+msgid "The IP to Country database has been updated."
 msgstr ""
 
-#: uc_ip2country.module:205
+#: uc_ip2country.module:206
 msgid "Database Updates"
 msgstr ""
 
-#: uc_ip2country.module:213
+#: uc_ip2country.module:214
 msgid "Log database updates to watchdog"
 msgstr ""
 
-#: uc_ip2country.module:222
+#: uc_ip2country.module:221
+msgid "Regional Internet Registry to use"
+msgstr ""
+
+#: uc_ip2country.module:224
+msgid "You may find that the regional server nearest you has the best response time, but note that AFRINIC provides only its own subset of registration data."
+msgstr ""
+
+#: uc_ip2country.module:232
 msgid "Database update frequency"
 msgstr ""
 
-#: uc_ip2country.module:225
+#: uc_ip2country.module:235
 msgid "Database will be automatically updated via cron.php.  Cron must be enabled for this to work.  Default period is 1 week (604800 seconds)."
 msgstr ""
 
-#: uc_ip2country.module:233
+#: uc_ip2country.module:243
 msgid "Update"
 msgstr ""
 
-#: uc_ip2country.module:234
+#: uc_ip2country.module:244
 msgid "The IP to Country Database may be updated manually by pressing the Update button below.  Note, this may take several minutes."
 msgstr ""
 
-#: uc_ip2country.module:241
+#: uc_ip2country.module:245
+msgid "Database last updated on "
+msgstr ""
+
+#: uc_ip2country.module:251
 msgid "Debug Preferences"
 msgstr ""
 
-#: uc_ip2country.module:242
+#: uc_ip2country.module:252
 msgid "Set debugging values"
 msgstr ""
 
-#: uc_ip2country.module:250
+#: uc_ip2country.module:260
 msgid "Admin Debug"
 msgstr ""
 
-#: uc_ip2country.module:252
+#: uc_ip2country.module:262
 msgid "Allows admin to specify an IP Address or Country to use for location-based currency."
 msgstr ""
 
-#: uc_ip2country.module:258
+#: uc_ip2country.module:268
 msgid "Bypass IP/Country check for administrator and manually enter"
 msgstr ""
 
-#: uc_ip2country.module:260
+#: uc_ip2country.module:270
 msgid "Country"
 msgstr ""
 
-#: uc_ip2country.module:260
+#: uc_ip2country.module:270
 msgid "IP Address"
 msgstr ""
 
-#: uc_ip2country.module:264
+#: uc_ip2country.module:274
 msgid "Dummy Country to use for testing"
 msgstr ""
 
-#: uc_ip2country.module:268
+#: uc_ip2country.module:278
 msgid "Dummy IP to use for testing"
+msgstr ""
+
+#: uc_ip2country.module:310
+msgid "Using ACTUAL value for Country - @country"
 msgstr ""
 
 #: uc_ip2country.module:78;181;0

@@ -5,7 +5,10 @@
  * @file
  * Utility routines to load the IP to Country database.
  *
- * Code derived from "class eIp2Country" posted at
+ * Data is obtained from one of the five Regional Internet Registries
+ * (AFRINIC, ARIN , APNIC, LACNIC, or RIPE).
+ *
+ * This code derived from "class eIp2Country" posted at
  * http://www.tellinya.com/read/2007/06/03/ip2country-translate-ip-address-to-country-code/
  */
 
@@ -15,9 +18,11 @@
  * Truncates uc_ip2country table then reloads from ftp servers
  *
  * @param $registry
- *   Get the data from this naming registry  
+ *   Regional Internet Registry from which to get the data.
+ *   Allowed values are afrinic, apnic, arin (default), lacnic, or ripe.
  */
-function uc_ip2country_update_database($registry="ripe") {
+function uc_ip2country_update_database($registry="arin") {
+  $registry = strtolower(trim($registry));
   //
   // FTP files
   //
@@ -44,10 +49,10 @@ function uc_ip2country_update_database($registry="ripe") {
     //
     $ftp_file = str_replace("ftp.ripe", "ftp.". $registry, $ftp_file);
     //
-    // RipeNCC is named ripe-ncc on ARIN registry
+    // RipeNCC is named ripe-ncc on APNIC registry
     //
-    //if ($registry == "arin")
-    //  $ftp_file = str_replace("stats/ripe-ncc/", "stats/ripencc/", $ftp_file);
+    if ($registry == "apnic")
+      $ftp_file = str_replace("stats/ripencc/", "stats/ripe-ncc/", $ftp_file);
     //
     // Fetch the FTP file using cUrl
     //

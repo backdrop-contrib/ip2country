@@ -63,6 +63,7 @@ function uc_ip2country_uninstall() {
   variable_del('uc_ip2country_test_type');
   variable_del('uc_ip2country_test_ip_address');
   variable_del('uc_ip2country_test_country');
+  variable_del('uc_ip2country_rir');
   variable_del('uc_ip2country_last_update');
   variable_del('uc_ip2country_update_interval');
   variable_del('uc_ip2country_update_database');

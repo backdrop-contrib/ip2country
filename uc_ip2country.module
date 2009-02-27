@@ -72,10 +72,10 @@ function uc_ip2country_perm() {
 function uc_ip2country_cron() {
   if (variable_get('uc_ip2country_last_update', 0) <=
       time() - variable_get('uc_ip2country_update_interval', 604800)) {
-    uc_ip2country_update_database('arin');
+    uc_ip2country_update_database(variable_get('uc_ip2country_rir', 'arin'));
     variable_set('uc_ip2country_last_update', time());
     if (variable_get('uc_ip2country_watchdog', 1)) {
-      watchdog('uc_ip2country', t('Database updated'), WATCHDOG_NOTICE);
+      watchdog('uc_ip2country', t('Database updated from @registry registry.', strtoupper(variable_get('uc_ip2country_rir', 'arin'))), WATCHDOG_NOTICE);
     }
   }
 }
@@ -112,7 +112,7 @@ function uc_ip2country_menu($may_cache) {
       'title'              => t('Update Database'),
       'access'             => user_access('administer ip2country'),
       'callback'           => '_uc_ip2country_update',
-      'callback arguments' => array('arin'),
+      'callback arguments' => array(variable_get('uc_ip2country_rir', 'arin')),
       'type'               => MENU_CALLBACK,
     );
   }
@@ -146,7 +146,7 @@ function uc_ip2country_user($op, &$edit, &$account, $category = NULL) {
           $ip = variable_get('uc_ip2country_test_ip', $ip);
           $country_code = uc_ip2country_get_country($ip);
         }
-        drupal_set_message("Using DEBUG value for Country - ". $country_code);
+        drupal_set_message(t('Using DEBUG value for Country - @country', $country_code));
       }
 
       // Finally, save country, if it has been determined
@@ -184,7 +184,7 @@ function _uc_ip2country_update($arg) {
     'count'   => t('@rows rows affected.',
                     array('@rows' => uc_ip2country_get_count())),
     'server'  => $arg,
-    'message' => t('The IP to Country database has been updated.  '),
+    'message' => t('The IP to Country database has been updated.'),
   ));
   exit();
 }
@@ -215,6 +215,15 @@ function uc_ip2country_admin_settings() {
     '#default_value' => variable_get('uc_ip2country_watchdog', 1),
   );
 
+  /* Form to set RIR */
+  $form['uc_ip2country_database_update']['uc_ip2country_rir'] = array(
+    '#type'          => 'select',
+    '#title'         => t('Regional Internet Registry to use'),
+    '#options'       => array('afrinic' => 'AFRINIC', 'apnic' => 'APNIC', 'arin' => 'ARIN', 'lacnic' => 'LACNIC', 'ripe' => 'RIPE'),
+    '#default_value' => variable_get('uc_ip2country_rir', 'arin'),
+    '#description'   => t('You may find that the regional server nearest you has the best response time, but note that AFRINIC provides only its own subset of registration data.'),
+  );
+
   $period = drupal_map_assoc(array(86400, 302400, 604800, 1209600, 2419200), 'format_interval');
 
   /* Form to set automatic update interval */
@@ -233,7 +242,7 @@ function uc_ip2country_admin_settings() {
     '#type'         => 'button',
     '#value'        => t('Update'),
     '#prefix'       => '<div>'. t('The IP to Country Database may be updated manually by pressing the Update button below.  Note, this may take several minutes.') .'</div>',
-    '#suffix'       => '<span id="dbthrobber" class="message">Database last updated on '. date('n/j/Y', $update_time) .' at '. date('H:i:s T', $update_time) .'</span>',
+    '#suffix'       => '<span id="dbthrobber" class="message">'. t('Database last updated on ') . date('n/j/Y', $update_time) .' at '. date('H:i:s T', $update_time) .'</span>',
   );
 
   /* Container for debugging preference forms */
@@ -292,13 +301,13 @@ function uc_ip2country_admin_settings_submit($form_id, $form_values) {
       // Dummy Country
       $country_code = db_result(db_query("SELECT country_iso_code_2 FROM {uc_countries} WHERE country_id = %d", $form_values['uc_ip2country_test_country']));
     }
-    drupal_set_message("Using DEBUG value for Country - ". $country_code);
+    drupal_set_message(t('Using DEBUG value for Country - @country', $country_code));
   }
   else {
     // Debug off - make sure we set/reset IP/Country to their real values
     $ip = $_SERVER['REMOTE_ADDR'];
     $country_code = uc_ip2country_get_country($ip);
-    drupal_set_message("Using ACTUAL value for Country - ". $country_code);
+    drupal_set_message(t('Using ACTUAL value for Country - @country', $country_code));
   }
 
   // Finally, save country, if it has been determined

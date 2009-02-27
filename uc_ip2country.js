@@ -26,7 +26,7 @@ if (Drupal.jsEnabled) {
     $('#edit-uc-ip2country-update-database').click(function(){
       var databaseUpdated = function(data) {
         var result = Drupal.parseJson(data);
-        $('#dbthrobber').removeClass('working').html(result['message'] + result['count']).addClass('completed');
+        $('#dbthrobber').removeClass('working').html(result['message'] + '  ' + result['count']).addClass('completed');
       }
       $('#dbthrobber').removeClass('message completed').addClass('working').html('Working...&nbsp;&nbsp;&nbsp;&nbsp;');
       $.get(Drupal.settings['base_path'] + 'admin/store/settings/ip2country/update', null, databaseUpdated);
