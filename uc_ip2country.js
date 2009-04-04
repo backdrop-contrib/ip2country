@@ -1,4 +1,6 @@
 if (Drupal.jsEnabled) {
+  (function ($) {  // Put definition of $ into local scope so jQuery code
+                   // doesn't conflict with other JavaScript libraries
   $(document).ready(function() {
     // Remove focus from the "Update" button
     $('#uc-ip2country-admin-settings .form-submit').eq(1).focus();
@@ -33,4 +35,6 @@ if (Drupal.jsEnabled) {
       return false;
     });
   });
+
+  }) (jQuery)  // End local scope for $
 }
