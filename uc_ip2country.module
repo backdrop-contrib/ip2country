@@ -146,7 +146,7 @@ function uc_ip2country_user($op, &$edit, &$account, $category = NULL) {
           $ip = variable_get('uc_ip2country_test_ip', $ip);
           $country_code = uc_ip2country_get_country($ip);
         }
-        drupal_set_message(t('Using DEBUG value for Country - @country', $country_code));
+        drupal_set_message(t('Using DEBUG value for Country - @country', array('@country' => $country_code)));
       }
 
       // Finally, save country, if it has been determined
@@ -301,13 +301,13 @@ function uc_ip2country_admin_settings_submit($form_id, $form_values) {
       // Dummy Country
       $country_code = db_result(db_query("SELECT country_iso_code_2 FROM {uc_countries} WHERE country_id = %d", $form_values['uc_ip2country_test_country']));
     }
-    drupal_set_message(t('Using DEBUG value for Country - @country', $country_code));
+    drupal_set_message(t('Using DEBUG value for Country - @country', array('@country' => $country_code)));
   }
   else {
     // Debug off - make sure we set/reset IP/Country to their real values
     $ip = $_SERVER['REMOTE_ADDR'];
     $country_code = uc_ip2country_get_country($ip);
-    drupal_set_message(t('Using ACTUAL value for Country - @country', $country_code));
+    drupal_set_message(t('Using ACTUAL value for Country - @country', array('@country' => $country_code)));
   }
 
   // Finally, save country, if it has been determined
