@@ -31,7 +31,7 @@ explicitly enabled for the administration user at admin/user/access.
 You must now enter values in the administration menus.  Defaults are chosen
 reasonably, but you should examine them and set them as you wish.
 
-Go to admin/store/settings/ip2country to review and change settings for the
+Go to admin/settings/ip2country to review and change settings for the
 IP-based determination of Country module.  You can read about the Debug
 preferences in the "Troubleshooting" section below.
 
@@ -81,14 +81,14 @@ is ARIN, an admin menu allows you to choose any of the five.
 
 If you have cron set up for your Drupal site, this IP to Country database will
 be automatically updated at a frequency determined by the admin menu at
-admin/store/settings/ip2country.  A checkbox is provided to turn on/off
+admin/settings/ip2country.  A checkbox is provided to turn on/off
 logging of database updates.  The default update frequency is 1 week, but it
 can be adjusted from 1 day up to 4 weeks.  Because of the time it takes to
 update and because the database is very stable, shorter database update times
 are not needed.
 
 Database updates may also be performed manually by pressing the button at
-admin/store/settings/ip2country.  Note this can take 2-5 minutes to complete -
+admin/settings/ip2country.  Note this can take 2-5 minutes to complete -
 do not interrupt the update process or the database will be incomplete and
 you'll have to do it again.
 
@@ -114,18 +114,18 @@ changing the time in the function drupal_cron_run() from 240 to 10*60.
 Troubleshooting
 ===============
 Does your site have PHP 5 built with cURL support?  Execute <?php phpinfo();?>
-to see the details of your PHP installation.
+or visit admin/logs/status/php to see the details of your PHP installation.
 
 Because it's not practical to log in from another country in order to test
 these features, a debugging setting is provided to allow the administrator
 to specify a Country or IP Address to simulate.  When debugging is enabled,
-it affects ONLY the administrator's view of the store.  To use this debugging
-setting, check the box "Admin Debug" at admin/store/settings/ip2country.  You
-must also specify either a Country to simulate or an IP to simulate.  A
-notification will be printed across the top of the page when you submit the
-form, letting you know that the debug feature has successfully been turned
-on (or off).  The simulated Country or IP will be used until the admin turns
-this feature off.
+it only affects the country stored in the administrator's $user object.
+To use this debugging setting, check the box "Admin Debug" at
+admin/settings/ip2country.  You must also specify either a Country to simulate
+or an IP to simulate.  A notification will be printed across the top of the
+page when you submit the form, letting you know that the debug feature has
+successfully been turned on (or off).  The simulated Country or IP will be
+used for the administrator until this feature is turned off in the admin menu.
 
 When all else fails, read the comments in the code - there are some debugging
 print statements left in that can be uncommented to see what is going on, and
