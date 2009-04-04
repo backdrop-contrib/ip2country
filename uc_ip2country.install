@@ -77,28 +77,30 @@ function uc_ip2country_uninstall() {
  *
  */
 function uc_ip2country_update_1() {
+  $ret = array();
+
   /* Remove all database tables created by this module */
-  db_query("ALTER TABLE {uc_ip2country} RENAME TO {ip2country}");
+  $ret[] = update_sql("ALTER TABLE {uc_ip2country} RENAME TO {ip2country}");
 
   /* Rename variables while  preserving setting values */
   variable_set('ip2country_debug',
-               variable_get('uc_ip2country_debug', ''));
+               variable_get('uc_ip2country_debug', FALSE));
   variable_set('ip2country_test_type',
-               variable_get('uc_ip2country_test_type', ''));
+               variable_get('uc_ip2country_test_type', 0));
   variable_set('ip2country_test_ip_address',
                variable_get('uc_ip2country_test_ip_address', ''));
   variable_set('ip2country_test_country',
                variable_get('uc_ip2country_test_country', ''));
   variable_set('ip2country_rir',
-               variable_get('uc_ip2country_rir', ''));
+               variable_get('uc_ip2country_rir', 'arin'));
   variable_set('ip2country_last_update',
-               variable_get('uc_ip2country_last_update', ''));
+               variable_get('uc_ip2country_last_update', 0));
   variable_set('ip2country_update_interval',
-               variable_get('uc_ip2country_update_interval', ''));
+               variable_get('uc_ip2country_update_interval', 604800));
   variable_set('ip2country_update_database',
                variable_get('uc_ip2country_update_database', ''));
   variable_set('ip2country_watchdog',
-               variable_get('uc_ip2country_watchdog', ''));
+               variable_get('uc_ip2country_watchdog', 1));
 
   /* Remove all old variables from the database */
   variable_del('uc_ip2country_debug');
@@ -110,4 +112,6 @@ function uc_ip2country_update_1() {
   variable_del('uc_ip2country_update_interval');
   variable_del('uc_ip2country_update_database');
   variable_del('uc_ip2country_watchdog');
+
+  return $ret;
 }
