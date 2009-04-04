@@ -4,7 +4,7 @@
 include_once(drupal_get_path('module', 'uc_ip2country') .'/uc_ip2country.inc');
 
 /**
- * Implementation of hook_install()
+ * Implementation of hook_install().
  *
  * Creates database tables needed by this module.
  */
@@ -13,7 +13,7 @@ function uc_ip2country_install() {
   switch ($GLOBALS['db_type']) {
     case 'mysqli':
     case 'mysql':
-      db_query("CREATE TABLE IF NOT EXISTS {uc_ip2country} (
+      db_query("CREATE TABLE IF NOT EXISTS {ip2country} (
           ip2country_id    int unsigned NOT NULL auto_increment,
           country          char(3)      NOT NULL,
           registry         char(10)     NOT NULL,
@@ -29,7 +29,7 @@ function uc_ip2country_install() {
 
     case 'pgsql':
       // pgsql case NOT TESTED !
-      db_query("CREATE TABLE IF NOT EXISTS {uc_ip2country} (
+      db_query("CREATE TABLE IF NOT EXISTS {ip2country} (
           ip2country_id    serial       NOT NULL,
           country          char(3)      NOT NULL,
           registry         char(10)     NOT NULL,
@@ -40,7 +40,7 @@ function uc_ip2country_install() {
           PRIMARY KEY  (ip2country_id)
         )"
       );
-      db_query("CREATE INDEX {uc_ip2country}_index ON {uc_ip2country} (country, registry)");
+      db_query("CREATE INDEX {ip2country}_index ON {ip2country} (country, registry)");
       break;
   }
 
@@ -49,16 +49,58 @@ function uc_ip2country_install() {
 }
 
 /**
- * Implementation of hook_uninstall()
+ * Implementation of hook_uninstall().
  *
  * Removes all tables and variables inserted into the
  * database by this module.
  */
 function uc_ip2country_uninstall() {
   /* Remove all database tables created by this module */
-  db_query("DROP TABLE {uc_ip2country}");
+  db_query("DROP TABLE {ip2country}");
 
   /* Remove all module variables from the database */
+  variable_del('ip2country_debug');
+  variable_del('ip2country_test_type');
+  variable_del('ip2country_test_ip_address');
+  variable_del('ip2country_test_country');
+  variable_del('ip2country_rir');
+  variable_del('ip2country_last_update');
+  variable_del('ip2country_lookup');
+  variable_del('ip2country_lookup_button');
+  variable_del('ip2country_update_interval');
+  variable_del('ip2country_update_database');
+  variable_del('ip2country_watchdog');
+}
+
+/**
+ * Implementation of hook_update().
+ *
+ */
+function uc_ip2country_update_1() {
+  /* Remove all database tables created by this module */
+  db_query("ALTER TABLE {uc_ip2country} RENAME TO {ip2country}");
+
+  /* Rename variables while  preserving setting values */
+  variable_set('ip2country_debug',
+               variable_get('uc_ip2country_debug', ''));
+  variable_set('ip2country_test_type',
+               variable_get('uc_ip2country_test_type', ''));
+  variable_set('ip2country_test_ip_address',
+               variable_get('uc_ip2country_test_ip_address', ''));
+  variable_set('ip2country_test_country',
+               variable_get('uc_ip2country_test_country', ''));
+  variable_set('ip2country_rir',
+               variable_get('uc_ip2country_rir', ''));
+  variable_set('ip2country_last_update',
+               variable_get('uc_ip2country_last_update', ''));
+  variable_set('ip2country_update_interval',
+               variable_get('uc_ip2country_update_interval', ''));
+  variable_set('ip2country_update_database',
+               variable_get('uc_ip2country_update_database', ''));
+  variable_set('ip2country_watchdog',
+               variable_get('uc_ip2country_watchdog', ''));
+
+  /* Remove all old variables from the database */
   variable_del('uc_ip2country_debug');
   variable_del('uc_ip2country_test_type');
   variable_del('uc_ip2country_test_ip_address');

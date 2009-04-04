@@ -15,14 +15,14 @@
 /**
  * Update the database
  *
- * Truncates uc_ip2country table then reloads from ftp servers
+ * Truncates ip2country table then reloads from ftp servers
  *
  * @param $registry
  *   Regional Internet Registry from which to get the data.
  *   Allowed values are afrinic, apnic, arin (default), lacnic, or ripe.
  */
-function uc_ip2country_update_database($registry="arin") {
-  $registry = strtolower(trim($registry));
+function ip2country_update_database($registry="arin") {
+  $registry = drupal_strtolower(trim($registry));
   //
   // FTP files
   //
@@ -42,7 +42,7 @@ function uc_ip2country_update_database($registry="arin") {
   //
   // Truncate the table to remove old data
   //
-  db_query("TRUNCATE TABLE {uc_ip2country}");
+  db_query("TRUNCATE TABLE {ip2country}");
   foreach ($ftp_sites as $ftp_file) {
     //
     // Replace Registry source with chosen registry
@@ -56,7 +56,7 @@ function uc_ip2country_update_database($registry="arin") {
     //
     // Fetch the FTP file using cUrl
     //
-    $txt = _uc_ip2country_fetch_page($ftp_file);
+    $txt = _ip2country_fetch_page($ftp_file);
     //
     // Break the FTP file into lines
     //
@@ -93,7 +93,7 @@ function uc_ip2country_update_database($registry="arin") {
       //
       // Prepare the query
       //
-      $sql = "INSERT INTO {uc_ip2country} (
+      $sql = "INSERT INTO {ip2country} (
                 `ip_range_first`,
                 `ip_range_last`,
                 `ip_range_length`,
@@ -119,7 +119,7 @@ function uc_ip2country_update_database($registry="arin") {
   //
   // Return record count in table
   //
-  variable_set('uc_ip2country_last_update', time());
+  variable_set('ip2country_last_update', time());
   return $entries;
 }
 
@@ -130,7 +130,7 @@ function uc_ip2country_update_database($registry="arin") {
  * @param $url
  *   The ftp URL where the file is located
  */
-function _uc_ip2country_fetch_page($url) {
+function _ip2country_fetch_page($url) {
   $curl = curl_init();
   curl_setopt($curl, CURLOPT_URL, $url);
   curl_setopt($curl, CURLOPT_TIMEOUT, 60*5);

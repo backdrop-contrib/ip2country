@@ -3,14 +3,14 @@ if (Drupal.jsEnabled) {
                    // doesn't conflict with other JavaScript libraries
   $(document).ready(function() {
     // Remove focus from the "Update" button
-    $('#uc-ip2country-admin-settings .form-submit').eq(1).focus();
+    $('#ip2country-admin-settings .form-submit').eq(1).focus();
     var selectCountry = function() {
-        $('#edit-uc-ip2country-test-country').removeAttr('disabled');
-        $('#edit-uc-ip2country-test-ip-address').attr('disabled', 'disabled');
+        $('#edit-ip2country-test-country').removeAttr('disabled');
+        $('#edit-ip2country-test-ip-address').attr('disabled', 'disabled');
     }
     var selectIP = function() {
-        $('#edit-uc-ip2country-test-country').attr('disabled', 'disabled');
-        $('#edit-uc-ip2country-test-ip-address').removeAttr('disabled');
+        $('#edit-ip2country-test-country').attr('disabled', 'disabled');
+        $('#edit-ip2country-test-ip-address').removeAttr('disabled');
     }
     // Select the appropriate input based on radio button values
     // First time in...
@@ -25,13 +25,23 @@ if (Drupal.jsEnabled) {
     // When "Update" button is pushed, make an AJAX call to initiate the
     // database update without leaving this page.  Throw up a progress
     // marker because it takes a long time.
-    $('#edit-uc-ip2country-update-database').click(function(){
+    $('#edit-ip2country-update-database').click(function(){
       var databaseUpdated = function(data) {
         var result = Drupal.parseJson(data);
         $('#dbthrobber').removeClass('working').html(result['message'] + '  ' + result['count']).addClass('completed');
       }
-      $('#dbthrobber').removeClass('message completed').addClass('working').html('Working...&nbsp;&nbsp;&nbsp;&nbsp;');
-      $.get(Drupal.settings['base_path'] + 'admin/store/settings/ip2country/update', null, databaseUpdated);
+      $('#dbthrobber').removeClass('message completed').addClass('working').html('Working...');
+      $.get(Drupal.settings['base_path'] + 'admin/settings/ip2country/update/' + $('#edit-ip2country-rir').val(), null, databaseUpdated);
+      return false;
+    });
+    // When "Lookup" button is pushed, make an AJAX call to initiate the
+    // database lookup
+    $('#edit-ip2country-lookup-button').click(function(){
+      var lookupCompleted = function(data) {
+        var result = Drupal.parseJson(data);
+        $('#lookup-message').html(result['message']);
+      }
+      $.get(Drupal.settings['base_path'] + 'admin/settings/ip2country/lookup/' + $('#edit-ip2country-lookup').val(), null, lookupCompleted);
       return false;
     });
   });

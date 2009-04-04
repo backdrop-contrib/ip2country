@@ -1,9 +1,10 @@
 /* $Id$ */
 
 #dbthrobber.working {
+  padding: 0 1.5em 0 0;
   background-image: url(/misc/throbber.gif);
   background-repeat: no-repeat;
-  background-position: 100% -20px;
+  background-position: 100% -1em;
   color: green;
 }
 
@@ -11,6 +12,7 @@
   color: green;
 }
 
-#dbthrobber.message {
+#dbthrobber.message,
+#lookup-message.message {
   color: red;
 }
