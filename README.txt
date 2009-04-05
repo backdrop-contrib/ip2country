@@ -18,11 +18,11 @@ Copy ip2country.tar.gz into your sites/all/modules directory and unzip/untar it.
 In your web browser, navigate to admin/build/modules and enable the following
 module: IP-based determination of Country
 
-NOTE!  When uc_ip2country is installed, it downloads a large amount of
+NOTE!  When ip2country is installed, it downloads a large amount of
 data off the Internet to build a table in your Drupal database.  This
 process can take several minutes, so please be patient and WAIT until
 the page loads!  You can verify a correct install by looking into your
-Drupal database for the uc_ip2country table and verifying that it is full
+Drupal database for the ip2country table and verifying that it is full
 of data.
 
 This module defines an "administer ip2country" permission, which must be
@@ -68,7 +68,7 @@ Alternatively, a function is provides so that you may look up the country
 from within your own code, for your own use.  The way to use this is:
 
   $ip = $_SERVER['REMOTE_ADDR'];
-  $country_code = uc_ip2country_get_country($ip);
+  $country_code = ip2country_get_country($ip);
 
 
 The database used is maintained by ARIN, the American Registry for Internet
