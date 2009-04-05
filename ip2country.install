@@ -1,14 +1,14 @@
 <?php
 // $Id$
 
-include_once(drupal_get_path('module', 'uc_ip2country') .'/uc_ip2country.inc');
+include_once(drupal_get_path('module', 'ip2country') .'/ip2country.inc');
 
 /**
  * Implementation of hook_install().
  *
  * Creates database tables needed by this module.
  */
-function uc_ip2country_install() {
+function ip2country_install() {
 
   switch ($GLOBALS['db_type']) {
     case 'mysqli':
@@ -45,7 +45,7 @@ function uc_ip2country_install() {
   }
 
   /* Populate the database */
-  uc_ip2country_update_database();
+  ip2country_update_database();
 }
 
 /**
@@ -54,7 +54,7 @@ function uc_ip2country_install() {
  * Removes all tables and variables inserted into the
  * database by this module.
  */
-function uc_ip2country_uninstall() {
+function ip2country_uninstall() {
   /* Remove all database tables created by this module */
   db_query("DROP TABLE {ip2country}");
 
@@ -76,7 +76,7 @@ function uc_ip2country_uninstall() {
  * Implementation of hook_update().
  *
  */
-function uc_ip2country_update_1() {
+function ip2country_update_1() {
   $ret = array();
 
   /* Remove all database tables created by this module */
