@@ -31,7 +31,7 @@ if (Drupal.jsEnabled) {
         $('#dbthrobber').removeClass('working').html(result['message'] + '  ' + result['count']).addClass('completed');
       }
       $('#dbthrobber').removeClass('message completed').addClass('working').html('Working...');
-      $.get(Drupal.settings['base_path'] + 'admin/settings/ip2country/update/' + $('#edit-ip2country-rir').val(), null, databaseUpdated);
+      $.get(Drupal.settings.basePath + 'admin/settings/ip2country/update/' + $('#edit-ip2country-rir').val(), null, databaseUpdated);
       return false;
     });
     // When "Lookup" button is pushed, make an AJAX call to initiate the
@@ -41,7 +41,7 @@ if (Drupal.jsEnabled) {
         var result = Drupal.parseJson(data);
         $('#lookup-message').html(result['message']);
       }
-      $.get(Drupal.settings['base_path'] + 'admin/settings/ip2country/lookup/' + $('#edit-ip2country-lookup').val(), null, lookupCompleted);
+      $.get(Drupal.settings.basePath + 'admin/settings/ip2country/lookup/' + $('#edit-ip2country-lookup').val(), null, lookupCompleted);
       return false;
     });
   });
