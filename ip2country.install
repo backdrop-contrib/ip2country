@@ -56,7 +56,7 @@ function ip2country_schema() {
       ),
     ),
     'indexes' => array(
-      'country, registry' => array('country', 'registry'),
+      'country_registry' => array('country', 'registry'),
     ),
     'primary key' => array('ip2country_id'),
   );
