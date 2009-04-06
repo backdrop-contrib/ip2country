@@ -85,10 +85,10 @@ function ip2country_menu() {
 
   $items['admin/settings/ip2country'] = array(
     'title'            => 'IP to Country Settings',
-    'description'      =>'Configure the IP/Country settings',
+    'description'      => 'Configure the IP/Country settings',
     'access arguments' => array('administer ip2country'),
     'page callback'    => 'drupal_get_form',
-    'page arguments'   => 'ip2country_admin_settings',
+    'page arguments'   => array('ip2country_admin_settings'),
     'type'             => MENU_NORMAL_ITEM,
   );
   $items['admin/settings/ip2country/update'] = array(
