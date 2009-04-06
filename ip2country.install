@@ -1,7 +1,69 @@
 <?php
 // $Id$
 
+
+// Include function definition for ip2country_update_database(),
+// which is needed to initially fill the database after creation.
 include_once(drupal_get_path('module', 'ip2country') .'/ip2country.inc');
+
+
+/**
+ * Implementation of hook_schema().
+ */
+function ip2country_schema() {
+  $schema['ip2country'] = array(
+    'description' => t('Association between IP range and Country'),
+    'fields' => array(
+      'ip2country_id' => array(
+        'description' => t('Row number (why is this needed?)'),
+        'type'        => 'serial',
+        'unsigned'    => TRUE,
+        'not null'    => TRUE,
+      ),
+      'country' => array(
+        'description' => t('ISO 3166 2-Character Country Code'),
+        'type'        => 'char',
+        'length'      => 3,
+        'not null'    => TRUE,
+      ),
+      'registry' => array(
+        'description' => t('Regional Internet Resgistry'),
+        'type'        => 'char',
+        'length'      => 10,
+        'not null'    => TRUE,
+      ),
+      'ip_range_first' => array(
+        'description' => t('Lowest IP Address in Range'),
+        'type'        => 'int',
+        'size'        => 'big',
+        'not null'    => TRUE,
+      ),
+      'ip_range_last' => array(
+        'description' => t('Highest IP Address in Range'),
+        'type'        => 'int',
+        'size'        => 'big',
+        'not null'    => TRUE,
+      ),
+      'ip_range_date' => array(
+        'description' => t('Date Assigned'),
+        'type'        => 'datetime',
+        'not null'    => TRUE,
+      ),
+      'ip_range_length' => array(
+        'description' => t('Size of IP Address Block'),
+        'type'        => 'int',
+        'not null'    => TRUE,
+      ),
+    ),
+    'indexes' => array(
+      'country, registry' => array('country', 'registry'),
+    ),
+    'primary key' => array('ip2country_id'),
+  );
+
+  return $schema;
+}
+
 
 /**
  * Implementation of hook_install().
@@ -10,43 +72,13 @@ include_once(drupal_get_path('module', 'ip2country') .'/ip2country.inc');
  */
 function ip2country_install() {
 
-  switch ($GLOBALS['db_type']) {
-    case 'mysqli':
-    case 'mysql':
-      db_query("CREATE TABLE IF NOT EXISTS {ip2country} (
-          ip2country_id    int unsigned NOT NULL auto_increment,
-          country          char(3)      NOT NULL,
-          registry         char(10)     NOT NULL,
-          ip_range_first   bigint       NOT NULL,
-          ip_range_last    bigint       NOT NULL,
-          ip_range_date    datetime     NOT NULL,
-          ip_range_length  int          NOT NULL,
-          PRIMARY KEY  (ip2country_id),
-          KEY (country, registry)
-        ) /*!40100 DEFAULT CHARACTER SET UTF8 */"
-      );
-      break;
-
-    case 'pgsql':
-      // pgsql case NOT TESTED !
-      db_query("CREATE TABLE IF NOT EXISTS {ip2country} (
-          ip2country_id    serial       NOT NULL,
-          country          char(3)      NOT NULL,
-          registry         char(10)     NOT NULL,
-          ip_range_first   bigint       NOT NULL,
-          ip_range_last    bigint       NOT NULL,
-          ip_range_date    datetime     NOT NULL,
-          ip_range_length  int          NOT NULL,
-          PRIMARY KEY  (ip2country_id)
-        )"
-      );
-      db_query("CREATE INDEX {ip2country}_index ON {ip2country} (country, registry)");
-      break;
-  }
+  /* Create tables */
+  drupal_install_schema('ip2country');
 
   /* Populate the database */
   ip2country_update_database();
 }
+
 
 /**
  * Implementation of hook_uninstall().
@@ -55,8 +87,9 @@ function ip2country_install() {
  * database by this module.
  */
 function ip2country_uninstall() {
+
   /* Remove all database tables created by this module */
-  db_query("DROP TABLE {ip2country}");
+  drupal_uninstall_schema('ip2country');
 
   /* Remove all module variables from the database */
   variable_del('ip2country_debug');
@@ -72,9 +105,9 @@ function ip2country_uninstall() {
   variable_del('ip2country_watchdog');
 }
 
+
 /**
  * Implementation of hook_update().
- *
  */
 function ip2country_update_1() {
   $ret = array();
