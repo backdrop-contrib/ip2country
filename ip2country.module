@@ -64,7 +64,7 @@ function ip2country_cron() {
     ip2country_update_database(variable_get('ip2country_rir', 'arin'));
     variable_set('ip2country_last_update', time());
     if (variable_get('ip2country_watchdog', 1)) {
-      watchdog('ip2country', 'Database updated from @registry registry.', drupal_strtoupper(variable_get('ip2country_rir', 'arin')), WATCHDOG_NOTICE);
+      watchdog('ip2country', 'Database updated from @registry server.', array('@registry' => drupal_strtoupper(variable_get('ip2country_rir', 'arin'))), WATCHDOG_NOTICE);
     }
   }
 }
@@ -165,7 +165,7 @@ function _ip2country_update($rir) {
 
   ip2country_update_database($rir);
   if (variable_get('ip2country_watchdog', 1)) {
-    watchdog('ip2country', 'Database updated', WATCHDOG_NOTICE);
+    watchdog('ip2country', 'Database updated from @registry server.', array('@registry' => drupal_strtoupper($rir)), WATCHDOG_NOTICE);
   }
   print drupal_to_js(array(
     'count'   => t('@rows rows affected.',
