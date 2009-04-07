@@ -345,6 +345,11 @@ function ip2country_admin_settings() {
 function ip2country_admin_settings_submit($form, &$form_state) {
   global $user;
 
+  // Exclude unnecessary elements from being saved in variable table
+  unset($form_state['values']['ip2country_update_database'],
+        $form_state['values']['ip2country_lookup'],
+        $form_state['values']['ip2country_lookup_button']);
+
   // Check to see if debug set
   if ($form_state['values']['ip2country_debug']) {
     // Debug on
