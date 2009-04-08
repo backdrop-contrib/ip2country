@@ -30,7 +30,7 @@ if (Drupal.jsEnabled) {
         var result = Drupal.parseJson(data);
         $('#dbthrobber').removeClass('working').html(result['message'] + '  ' + result['count']).addClass('completed');
       }
-      $('#dbthrobber').removeClass('message completed').addClass('working').html('Working...');
+      $('#dbthrobber').removeClass('message completed').addClass('working').html(Drupal.t('Working...'));
       $.get(Drupal.settings.basePath + 'admin/settings/ip2country/update/' + $('#edit-ip2country-rir').val(), null, databaseUpdated);
       return false;
     });
