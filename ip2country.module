@@ -42,8 +42,8 @@ module_load_include('inc', 'ip2country', 'ip2country');
 /**
  * Implementation of hook_help().
  */
-function uc_ip2country_help($section = 'admin/help#uc_ip2country') {
-  switch ($section) {
+function uc_ip2country_help($path, $arg) {
+  switch ($path) {
     case 'admin/help#uc_ip2country':
       return t('Detects Country of user based on IP address.');
       break;
