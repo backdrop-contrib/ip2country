@@ -1,8 +1,8 @@
 ; $Id$
 name = IP-based determination of Country
 description = Determines country the user is located in, based on IP address
-dependencies[] = uc_store
-package = Ubercart - extra
+dependencies[] = countries_api
+package = Location
 version = "$Name$"
 
 core = 6.x

@@ -42,9 +42,9 @@ module_load_include('inc', 'ip2country', 'ip2country');
 /**
  * Implementation of hook_help().
  */
-function uc_ip2country_help($path, $arg) {
+function ip2country_help($path, $arg) {
   switch ($path) {
-    case 'admin/help#uc_ip2country':
+    case 'admin/help#ip2country':
       return t('Detects Country of user based on IP address.');
       break;
 
@@ -138,7 +138,7 @@ function ip2country_user($op, &$edit, &$account, $category = NULL) {
           variable_get('ip2country_debug', FALSE)) {
         $type = variable_get('ip2country_test_type', 0);
         if ($type == 0) {  // Debug Country entered
-          $country_code = db_result(db_query("SELECT country_iso_code_2 FROM {uc_countries} WHERE country_id = %d", variable_get('ip2country_test_country', 'US')));
+          $country_code = variable_get('ip2country_test_country', 'US');
         }
         else {  // Debug IP entered
           $ip = variable_get('ip2country_test_ip', $ip);
@@ -273,6 +273,7 @@ function ip2country_admin_settings() {
   $form['ip2country_database_update']['ip2country_update_database'] = array(
     '#type'        => 'button',
     '#value'       => t('Update'),
+    '#executes_submit_callback' => FALSE,
     '#prefix'      => '<div>'. t('The IP to Country Database may be updated manually by pressing the Update button below.  Note, this may take several minutes.') .'</div>',
     '#suffix'      => '<span id="dbthrobber" class="message">'. t('Database last updated on ') . date('n/j/Y', $update_time) .' at '. date('H:i:s T', $update_time) .'</span>',
   );
@@ -297,6 +298,7 @@ function ip2country_admin_settings() {
   $form['ip2country_manual_lookup']['ip2country_lookup_button'] = array(
     '#type'        => 'button',
     '#value'       => t('Lookup'),
+    '#executes_submit_callback' => FALSE,
     '#prefix'      => '<div>'. t('An IP address may be looked up in the database by entering the address above then pressing the Lookup button below.') .'</div>',
     '#suffix'      => '<span id="lookup-message" class="message"></span>',
   );
@@ -326,8 +328,19 @@ function ip2country_admin_settings() {
     '#options'       => array(t('Country'), t('IP Address')),
   );
 
+  $options = array();
+  $result = db_query("SELECT iso2, printable_name FROM {countries_api_countries} ORDER BY printable_name");
+  while ($country = db_fetch_array($result)) {
+    $options[$country['iso2']] = $country['printable_name'];
+  }
+
   $dd = variable_get('ip2country_test_country', ip2country_get_country(ip_address()));
-  $form['ip2country_debug_preferences']['ip2country_test_country'] = uc_country_select(t('Dummy Country to use for testing'), $dd, NULL, 'name', FALSE);
+  $form['ip2country_debug_preferences']['ip2country_test_country'] = array(
+    '#type'          => 'select',
+    '#title'         => t('Dummy Country to use for testing'),
+    '#default_value' => $dd,
+    '#options'       => $options,
+  );
 
   $form['ip2country_debug_preferences']['ip2country_test_ip_address'] = array(
     '#type'          => 'textfield',
@@ -360,7 +373,7 @@ function ip2country_admin_settings_submit($form, &$form_state) {
     }
     else {
       // Dummy Country
-      $country_code = db_result(db_query("SELECT country_iso_code_2 FROM {uc_countries} WHERE country_id = %d", $form_state['values']['ip2country_test_country']));
+      $country_code = $form_state['values']['ip2country_test_country'];
     }
     drupal_set_message(t('Using DEBUG value for Country - @country', array('@country' => $country_code)));
   }
@@ -385,7 +398,7 @@ function ip2country_admin_settings_submit($form, &$form_state) {
 
 
 /**
- * Get the Country Code from the IP address
+ * Get the ISO 3166 2-character country Code from the IP address
  *
  * @return
  *   FALSE if the lookup failed to find a country for this IP

@@ -10,8 +10,7 @@ by country.
 
 Installation
 ============
-Check requirements:  PHP 5 with cURL support enabled.
-Drupal 5.7+ (Drupal 6 not allowed), Ubercart 1.0 or above.
+Check requirements:  PHP 5 with cURL support enabled.  Drupal 6.x.
 
 Copy ip2country.tar.gz into your sites/all/modules directory and unzip/untar it.
 
@@ -37,7 +36,7 @@ preferences in the "Troubleshooting" section below.
 
 Finally, cron needs to be running for automatic database updates.  If you
 haven't set up cron for your Drupal site, refer to
-http://drupal.org/getting-started/5/install/cron for instructions.
+http://drupal.org/getting-started/6/install/cron for instructions.
 
 Because the database update takes so long to run, you may have to increase
 the allowed cron run time.  This requires editing includes/common.inc and
@@ -96,10 +95,9 @@ you'll have to do it again.
 
 Requirements
 ============
-This module is known to work with Drupal 5.x and all Ubercart releases greater
-than 1.0 RC5.  While it may run in older versions, I won't promise anything.
-Future version of this module WILL be backwards compatible with this initial
-release.
+This module is tested to work with Drupal 6.x.  There is a separate version
+specifically for Drupal 5.x.  Future version of this module will be backwards
+compatible with this release.
 
 
 
