@@ -12,6 +12,9 @@ Installation
 ============
 Check requirements:  PHP 5 with cURL support enabled.  Drupal 6.x.
 
+This module depends on the countries_api module, which may be obtained
+from http://drupal.org/projects/countries_api.
+
 Copy ip2country.tar.gz into your sites/all/modules directory and unzip/untar it.
 
 In your web browser, navigate to admin/build/modules and enable the following
@@ -75,8 +78,8 @@ Numbers (http://www.arin.net/about_us/index.html), which is one of the five
 official Regional Internet Registries (RIR) responsible for assigning IP
 addresses.  The claim is the database is 98% accurate, with most of the
 problems coming from users in less-developed countries.  Regardless, there's
-no more-authoritive source of this information.  Although the default RIR used
-is ARIN, an admin menu allows you to choose any of the five.
+no more-authoritative source of this information.  Although the default RIR
+used is ARIN, an admin menu allows you to choose any of the five.
 
 If you have cron set up for your Drupal site, this IP to Country database will
 be automatically updated at a frequency determined by the admin menu at
