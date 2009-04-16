@@ -275,7 +275,7 @@ function ip2country_admin_settings() {
     '#value'       => t('Update'),
     '#executes_submit_callback' => FALSE,
     '#prefix'      => '<div>'. t('The IP to Country Database may be updated manually by pressing the Update button below.  Note, this may take several minutes.') .'</div>',
-    '#suffix'      => '<span id="dbthrobber" class="message">'. t('Database last updated on ') . date('n/j/Y', $update_time) .' at '. date('H:i:s T', $update_time) .'</span>',
+    '#suffix'      => '<span id="dbthrobber" class="message">'. t('Database last updated on ') . format_date($update_time, 'custom', 'n/j/Y') .' at '. format_date($update_time, 'custom', 'H:i:s T') .'</span>',
   );
 
   /* Container for manual lookup */
