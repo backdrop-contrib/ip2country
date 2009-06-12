@@ -8,6 +8,26 @@ include_once(drupal_get_path('module', 'ip2country') .'/ip2country.inc');
 
 
 /**
+ * Implementation of hook_requirements().
+ */
+function ip2country_requirements($phase) {
+  $t = get_t();
+
+  $has_curl = function_exists('curl_init');
+  $requirements['ip2country_curl'] = array(
+    'title' => $t('cURL'),
+    'value' => $has_curl ? $t('Enabled') : $t('Not found'),
+  );
+  if (!$has_curl) {
+    $requirements['ip2country_curl']['severity'] = REQUIREMENT_ERROR;
+    $requirements['ip2country_curl']['description'] = $t("ip2country requires the PHP <a href='!curl_url'>cURL</a> library.", array('!curl_url' => 'http://php.net/manual/en/curl.setup.php'));
+  }
+
+  return $requirements;
+}
+
+
+/**
  * Implementation of hook_schema().
  */
 function ip2country_schema() {
