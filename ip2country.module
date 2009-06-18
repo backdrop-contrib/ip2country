@@ -317,13 +317,13 @@ function ip2country_admin_settings() {
     '#type'          => 'checkbox',
     '#title'         => t('Admin Debug'),
     '#default_value' => variable_get('ip2country_debug', FALSE),
-    '#description'   => t('Allows admin to specify an IP Address or Country to use for location-based currency.'),
+    '#description'   => t('Enables administrator to spoof an IP Address or Country for debugging purposes.'),
   );
 
   /* Form to select Dummy Country or Dummy IP Address for testing */
   $form['ip2country_debug_preferences']['ip2country_test_type'] = array(
     '#type'          => 'radios',
-    '#title'         => t('Bypass IP/Country check for administrator and manually enter'),
+    '#title'         => t('Select which parameter to spoof.'),
     '#default_value' => variable_get('ip2country_test_type', 0),
     '#options'       => array(t('Country'), t('IP Address')),
   );
@@ -337,14 +337,14 @@ function ip2country_admin_settings() {
   $dd = variable_get('ip2country_test_country', ip2country_get_country(ip_address()));
   $form['ip2country_debug_preferences']['ip2country_test_country'] = array(
     '#type'          => 'select',
-    '#title'         => t('Dummy Country to use for testing'),
+    '#title'         => t('Country to use for testing'),
     '#default_value' => $dd,
     '#options'       => $options,
   );
 
   $form['ip2country_debug_preferences']['ip2country_test_ip_address'] = array(
     '#type'          => 'textfield',
-    '#title'         => t('Dummy IP to use for testing'),
+    '#title'         => t('IP address to use for testing'),
     '#default_value' => variable_get('ip2country_test_ip_address', ip_address()),
   );
 
