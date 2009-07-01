@@ -32,45 +32,45 @@ function ip2country_requirements($phase) {
  */
 function ip2country_schema() {
   $schema['ip2country'] = array(
-    'description' => t('Association between IP range and Country'),
+    'description' => 'Association between IP range and Country',
     'fields' => array(
       'ip2country_id' => array(
-        'description' => t('Row number (why is this needed?)'),
+        'description' => 'Row number (why is this needed?)',
         'type'        => 'serial',
         'unsigned'    => TRUE,
         'not null'    => TRUE,
       ),
       'country' => array(
-        'description' => t('ISO 3166 2-Character Country Code'),
+        'description' => 'ISO 3166 2-Character Country Code',
         'type'        => 'char',
         'length'      => 3,
         'not null'    => TRUE,
       ),
       'registry' => array(
-        'description' => t('Regional Internet Resgistry'),
+        'description' => 'Regional Internet Resgistry',
         'type'        => 'char',
         'length'      => 10,
         'not null'    => TRUE,
       ),
       'ip_range_first' => array(
-        'description' => t('Lowest IP Address in Range'),
+        'description' => 'Lowest IP Address in Range',
         'type'        => 'int',
         'size'        => 'big',
         'not null'    => TRUE,
       ),
       'ip_range_last' => array(
-        'description' => t('Highest IP Address in Range'),
+        'description' => 'Highest IP Address in Range',
         'type'        => 'int',
         'size'        => 'big',
         'not null'    => TRUE,
       ),
       'ip_range_date' => array(
-        'description' => t('Date Assigned'),
+        'description' => 'Date Assigned',
         'type'        => 'datetime',
         'not null'    => TRUE,
       ),
       'ip_range_length' => array(
-        'description' => t('Size of IP Address Block'),
+        'description' => 'Size of IP Address Block',
         'type'        => 'int',
         'not null'    => TRUE,
       ),
