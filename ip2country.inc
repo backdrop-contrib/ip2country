@@ -26,13 +26,21 @@ function ip2country_update_database($registry="arin") {
   //
   // FTP files
   //
-  $ftp_sites = array(
-    "ftp://ftp.ripe.net/pub/stats/arin/delegated-arin-latest",
-    "ftp://ftp.ripe.net/pub/stats/apnic/delegated-apnic-latest",
-    "ftp://ftp.ripe.net/pub/stats/lacnic/delegated-lacnic-latest",
-    "ftp://ftp.ripe.net/pub/stats/afrinic/delegated-afrinic-latest",
-    "ftp://ftp.ripe.net/pub/stats/ripencc/delegated-ripencc-latest",
-  );
+  if ($registry == "afrinic") {
+    // afrinic only holds its own data - all other nics have all the data
+    $ftp_sites = array(
+      "ftp://ftp.ripe.net/pub/stats/afrinic/delegated-afrinic-latest",
+    );
+  }
+  else {
+    $ftp_sites = array(
+      "ftp://ftp.ripe.net/pub/stats/arin/delegated-arin-latest",
+      "ftp://ftp.ripe.net/pub/stats/apnic/delegated-apnic-latest",
+      "ftp://ftp.ripe.net/pub/stats/lacnic/delegated-lacnic-latest",
+      "ftp://ftp.ripe.net/pub/stats/afrinic/delegated-afrinic-latest",
+      "ftp://ftp.ripe.net/pub/stats/ripencc/delegated-ripencc-latest",
+    );
+  }
 
   $entries   = 0;
   //
@@ -101,7 +109,7 @@ function ip2country_update_database($registry="arin") {
                 `registry`,
                 `ip_range_date`
               )
-              VALUES ( %d, %d, %d, '%s', '%s', FROM_UNIXTIME(%d) )";
+              VALUES (%d, %d, %d, '%s', '%s', FROM_UNIXTIME(%d))";
       //
       // Insert range into the DB
       //
