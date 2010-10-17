@@ -1,9 +1,8 @@
 // $Id$
 
-if (Drupal.jsEnabled) {
-  (function ($) {  // Put definition of $ into local scope so jQuery code
-                   // doesn't conflict with other JavaScript libraries
-  $(document).ready(function() {
+(function ($) {  // Put definition of $ into local scope so jQuery code
+                 // doesn't conflict with other JavaScript libraries
+  Drupal.behaviors.ip2country = function() {
     // Remove focus from the "Update" button
     $('#ip2country-admin-settings .form-submit').eq(1).focus();
     var selectCountry = function() {
@@ -46,7 +45,6 @@ if (Drupal.jsEnabled) {
       $.get(Drupal.settings.basePath + 'admin/settings/ip2country/lookup/' + $('#edit-ip2country-lookup').val(), null, lookupCompleted);
       return false;
     });
-  });
+  };
 
-  }) (jQuery)  // End local scope for $
-}
+}) (jQuery);  // End local scope for $

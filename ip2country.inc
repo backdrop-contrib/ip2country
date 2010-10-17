@@ -27,7 +27,7 @@ function ip2country_update_database($registry="arin") {
   // FTP files
   //
   if ($registry == "afrinic") {
-    // afrinic only holds its own data - all other nics have all the data
+    // afrinic only holds its own data - every other nic has all the data
     $ftp_sites = array(
       "ftp://ftp.ripe.net/pub/stats/afrinic/delegated-afrinic-latest",
     );
@@ -62,13 +62,14 @@ function ip2country_update_database($registry="arin") {
     if ($registry == "apnic")
       $ftp_file = str_replace("stats/ripencc/", "stats/ripe-ncc/", $ftp_file);
     //
-    // Fetch the FTP file using cUrl
+    // Fetch the FTP file using cURL
     //
     $txt = _ip2country_fetch_page($ftp_file);
     //
     // Break the FTP file into lines
     //
     $lines = explode("\n", $txt);
+    unset($txt);  // Free up memory
     foreach ($lines as $line) {
       //
       // Trim each line for security
@@ -81,45 +82,39 @@ function ip2country_update_database($registry="arin") {
       if ($parts[2] != "ipv4" || count($parts) != 7)
         continue;
       //
-      // Get the date of the allocation
-      //
-      $date_str   = $parts[5];
-      $alloc_date = time();
-      if (preg_match("/([0-9]{4})([0-9]{2})([0-9]{2})/", $date_str, $date_pcs))
-        $alloc_date = mktime(0, 0, 0, $date_pcs[2], $date_pcs[3], $date_pcs[1]);
-      //
       // The registry that owns the range
       //
       $owner_registry = $parts[0];
       //
-      // Prepare the data for insert
+      // The country code for the range
+      //
+      $country_code = $parts[1];
+      //
+      // Prepare the IP data for insert
       //
       $ip_start     = (int) ip2long($parts[3]);
       $ip_end       = (int) ip2long($parts[3])+($parts[4]-1);
       $range_length = (int) $parts[4];
-      $country_code = $parts[1];
       //
       // Prepare the query
       //
       $sql = "INSERT INTO {ip2country} (
-                `ip_range_first`,
-                `ip_range_last`,
-                `ip_range_length`,
-                `country`,
-                `registry`,
-                `ip_range_date`
+                country,
+                registry,
+                ip_range_first,
+                ip_range_last,
+                ip_range_length
               )
-              VALUES (%d, %d, %d, '%s', '%s', FROM_UNIXTIME(%d))";
+              VALUES ('%s', '%s', %d, %d, %d)";
       //
       // Insert range into the DB
       //
       db_query($sql,
-               min($ip_start, $ip_end),
-               max($ip_start, $ip_end),
-               $range_length,
                $country_code,
                $owner_registry,
-               $alloc_date
+               min($ip_start, $ip_end),
+               max($ip_start, $ip_end),
+               $range_length
       );
       $entries++;
     }

@@ -43,7 +43,10 @@ http://drupal.org/getting-started/6/install/cron for instructions.
 
 Because the database update takes so long to run, you may have to increase
 the allowed cron run time.  This requires editing includes/common.inc and
-changing the time in the function drupal_cron_run() from 240 to 10*60.
+changing the time in the function drupal_cron_run() from 240 to 10*60.  This
+function can be found in includes/common.inc under your Drupal root.  Look
+for the first occurrence of set_time_limit() in this function and replace
+the argument with 600.
 
 Everything should now work.  If it doesn't, read the rest of this document
 (which you really should have done first, anyway!).  If you still have
