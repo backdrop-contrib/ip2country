@@ -178,12 +178,12 @@ function ip2country_get_country($ip_address) {
     $ipl = ip_address;
   }
 
-  // Locate IP within ranges
-  $sql    = "SELECT country FROM {ip2country}
-             WHERE (%d >= `ip_range_first` AND %d <= `ip_range_last`) LIMIT 1";
-  $result = db_result(db_query($sql, $ipl, $ipl));
+  // Locate IP within range
+  $sql = "SELECT country FROM {ip2country}
+          WHERE (%d >= ip_range_first AND %d <= ip_range_last) LIMIT 1";
+  $country_code = db_result(db_query($sql, $ipl, $ipl));
 
-  return $result;
+  return $country_code;
 }
 
 
