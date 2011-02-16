@@ -13,9 +13,9 @@
  */
 
 /**
- * Update the database
+ * Update the database.
  *
- * Truncates ip2country table then reloads from ftp servers
+ * Truncates ip2country table then reloads from ftp servers.
  *
  * @param $registry
  *   Regional Internet Registry from which to get the data.
@@ -128,10 +128,10 @@ function ip2country_update_database($registry="arin") {
 
 
 /**
- * Fetch the pages with cURL
+ * Fetch the pages with cURL.
  *
  * @param $url
- *   The ftp URL where the file is located
+ *   The ftp URL where the file is located.
  */
 function _ip2country_fetch_page($url) {
   $curl = curl_init();

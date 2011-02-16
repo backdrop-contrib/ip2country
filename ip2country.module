@@ -167,10 +167,10 @@ function ip2country_user($op, &$edit, &$account, $category = NULL) {
 
 
 /**
- * Get the ISO 3166 2-character country Code from the IP address
+ * Get the ISO 3166 2-character country Code from the IP address.
  *
  * @return
- *   FALSE if the lookup failed to find a country for this IP
+ *   FALSE if the lookup failed to find a country for this IP.
  */
 function ip2country_get_country($ip_address) {
   $ipl = ip2long($ip_address);
@@ -188,7 +188,7 @@ function ip2country_get_country($ip_address) {
 
 
 /**
- * Get the total count of IP ranges in database
+ * Get the total count of IP ranges in database.
  */
 function ip2country_get_count() {
   $sql   = "SELECT COUNT(*) FROM {ip2country}";

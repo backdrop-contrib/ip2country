@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Determination of user's Country based on IP
+ * Determination of user's Country based on IP address.
  *
  * This module uses the IP Address that a user is connected from to deduce
  * the Country where the user is located.  This method is not foolproof,
@@ -40,10 +40,10 @@
  * AJAX callback to update the IP to Country database.
  *
  * @param $rir
- *   String with name of IP registry.  One of afrinic, arin, lacnic, ripe
+ *   String with name of IP registry.  One of afrinic, arin, lacnic, ripe.
  *
  * @return
- *   JSON object for display by jQuery script
+ *   JSON object for display by jQuery script.
  */
 function _ip2country_update($rir) {
 
@@ -68,10 +68,10 @@ function _ip2country_update($rir) {
  * AJAX callback to lookup an IP address in the database.
  *
  * @param $arg
- *   String with IP address
+ *   String with IP address.
  *
  * @return
- *   JSON object for display by jQuery script
+ *   JSON object for display by jQuery script.
  */
 function _ip2country_lookup($arg) {
 
@@ -245,7 +245,7 @@ function ip2country_admin_settings(&$form_state) {
 
 
 /**
- * Process Forms submitted by IP to Country administration page
+ * Process Forms submitted by IP to Country administration page.
  */
 function ip2country_admin_settings_submit($form, &$form_state) {
   global $user;
