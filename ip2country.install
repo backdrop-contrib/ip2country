@@ -1,11 +1,14 @@
 <?php
 // $Id$
 
+/**
+ * @file
+ * Install, update, and uninstall functions for the ip2country module.
+ */
 
 // Include function definition for ip2country_update_database(),
 // which is needed to initially fill the database after creation.
 include_once(drupal_get_path('module', 'ip2country') .'/ip2country.inc');
-
 
 /**
  * Implements hook_requirements().

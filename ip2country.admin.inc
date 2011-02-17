@@ -99,6 +99,9 @@ function _ip2country_lookup($arg) {
  *
  * @return
  *   Forms for store administrator to set configuration options.
+ *
+ * @see ip2country_admin_settings_submit()
+ * @ingroup forms
  */
 function ip2country_admin_settings(&$form_state) {
   drupal_add_js(drupal_get_path('module', 'ip2country') .'/ip2country.js');
@@ -246,6 +249,8 @@ function ip2country_admin_settings(&$form_state) {
 
 /**
  * Processes forms submitted by IP to Country administration page.
+ *
+ * @see ip2country_admin_settings()
  */
 function ip2country_admin_settings_submit($form, &$form_state) {
   global $user;
