@@ -8,7 +8,7 @@ include_once(drupal_get_path('module', 'ip2country') .'/ip2country.inc');
 
 
 /**
- * Implementation of hook_requirements().
+ * Implements hook_requirements().
  */
 function ip2country_requirements($phase) {
   $t = get_t();
@@ -28,7 +28,7 @@ function ip2country_requirements($phase) {
 
 
 /**
- * Implementation of hook_schema().
+ * Implements hook_schema().
  */
 function ip2country_schema() {
   $schema['ip2country'] = array(
@@ -81,7 +81,7 @@ function ip2country_schema() {
 
 
 /**
- * Implementation of hook_install().
+ * Implements hook_install().
  *
  * Creates database tables needed by this module.
  */
@@ -96,7 +96,7 @@ function ip2country_install() {
 
 
 /**
- * Implementation of hook_uninstall().
+ * Implements hook_uninstall().
  *
  * Removes all tables and variables inserted into the
  * database by this module.

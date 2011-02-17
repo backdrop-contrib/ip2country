@@ -245,7 +245,7 @@ function ip2country_admin_settings(&$form_state) {
 
 
 /**
- * Process Forms submitted by IP to Country administration page.
+ * Processes forms submitted by IP to Country administration page.
  */
 function ip2country_admin_settings_submit($form, &$form_state) {
   global $user;

@@ -13,7 +13,7 @@
  */
 
 /**
- * Update the database.
+ * Updates the database.
  *
  * Truncates ip2country table then reloads from ftp servers.
  *
@@ -128,7 +128,7 @@ function ip2country_update_database($registry="arin") {
 
 
 /**
- * Fetch the pages with cURL.
+ * Fetches the pages with cURL.
  *
  * @param $url
  *   The ftp URL where the file is located.

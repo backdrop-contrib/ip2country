@@ -40,7 +40,7 @@ module_load_include('inc', 'ip2country', 'ip2country');
 
 
 /**
- * Implementation of hook_help().
+ * Implements hook_help().
  */
 function ip2country_help($path, $arg) {
   switch ($path) {
@@ -56,7 +56,7 @@ function ip2country_help($path, $arg) {
 
 
 /**
- * Implementation of hook_perm().
+ * Implements hook_perm().
  */
 function ip2country_perm() {
   return array('administer ip2country');
@@ -64,7 +64,7 @@ function ip2country_perm() {
 
 
 /**
- * Implementation of hook_cron().
+ * Implements hook_cron().
  *
  * Updates the IP to Country database automatically on a periodic
  * basis.  Default period is 1 week.
@@ -82,14 +82,7 @@ function ip2country_cron() {
 
 
 /**
- * Implementation of hook_menu().
- *
- * Called when Drupal is building menus.  Cache parameter lets module know
- * if Drupal intends to cache menu or not - different results may be
- * returned for either case.
- *
- * @return
- *   An array with the menu path, callback, and parameters.
+ * Implements hook_menu().
  */
 function ip2country_menu() {
   $items = array();
@@ -123,7 +116,7 @@ function ip2country_menu() {
 
 
 /**
- * Implementation of hook_user().
+ * Implements hook_user().
  *
  * Detects IP and determines country upon user login.
  */
@@ -167,7 +160,7 @@ function ip2country_user($op, &$edit, &$account, $category = NULL) {
 
 
 /**
- * Get the ISO 3166 2-character country Code from the IP address.
+ * Gets the ISO 3166 2-character country Code from the IP address.
  *
  * @return
  *   FALSE if the lookup failed to find a country for this IP.
@@ -188,7 +181,7 @@ function ip2country_get_country($ip_address) {
 
 
 /**
- * Get the total count of IP ranges in database.
+ * Gets the total count of IP ranges in database.
  */
 function ip2country_get_count() {
   $sql   = "SELECT COUNT(*) FROM {ip2country}";
