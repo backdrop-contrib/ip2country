@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * @file
@@ -26,7 +25,6 @@
  * Regardless, there's no more-authoritive source of this information.
  *
  * @author Tim Rohaly.    <http://drupal.org/user/202830>
- * @version $Id$
  */
 
 

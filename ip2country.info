@@ -1,4 +1,3 @@
-; $Id$
 name = IP-based determination of Country
 description = Determines country the user is located in, based on IP address
 dependencies[] = countries_api
