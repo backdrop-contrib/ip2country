@@ -1,8 +1,6 @@
 name = IP-based determination of Country
 description = Determines country the user is located in, based on IP address
-dependencies[] = countries_api
 package = Location
-version = "$Name$"
-
-core = 6.x
-php = 5.0
+core = 7.x
+configure = admin/config/location/ip2country
+files[] = ip2country.test

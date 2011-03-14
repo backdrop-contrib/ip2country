@@ -28,11 +28,12 @@
  */
 
 
+/** Drupal core function country_get_list() which returns a list of countries */
+include_once DRUPAL_ROOT . '/includes/locale.inc';
 
 /******************************************************************************
- * Menu Callbacks                                                             *
+ * Ajax Callbacks                                                             *
  ******************************************************************************/
-
 
 /**
  * AJAX callback to update the IP to Country database.
@@ -51,7 +52,7 @@ function _ip2country_update($rir) {
   if (variable_get('ip2country_watchdog', 1)) {
     watchdog('ip2country', 'Database updated from @registry server.', array('@registry' => drupal_strtoupper($rir)), WATCHDOG_NOTICE);
   }
-  print drupal_to_js(array(
+  print drupal_json_encode(array(
     'count'   => t('@rows rows affected.',
                     array('@rows' => ip2country_get_count())),
     'server'  => $rir,
@@ -74,22 +75,30 @@ function _ip2country_update($rir) {
 function _ip2country_lookup($arg) {
 
   // Return results of manual lookup
-  $country = ip2country_get_country($arg);
-  if ($country) {
-    print drupal_to_js(array(
-      'message' => t('IP Address @ip is assigned to @country.',
+  $country_code = ip2country_get_country($arg);
+  if ($country_code) {
+    $country_list = country_get_list();
+    $country_name = $country_list[$country_code];
+    print drupal_json_encode(array(
+      'message' => t('IP Address @ip is assigned to @country (@code).',
                      array('@ip'      => $arg,
-                           '@country' => $country)),
+                           '@country' => $country_name,
+                           '@code'    => $country_code)),
     ));
   }
   else {
-    print drupal_to_js(array(
+    print drupal_json_encode(array(
       'message' => t('IP Address @ip is not assigned to a country.',
                      array('@ip' => $arg)),
     ));
   }
   exit();
 }
+
+
+/******************************************************************************
+ * Menu Callbacks                                                             *
+ ******************************************************************************/
 
 
 /**
@@ -102,8 +111,8 @@ function _ip2country_lookup($arg) {
  * @ingroup forms
  */
 function ip2country_admin_settings(&$form_state) {
-  drupal_add_js(drupal_get_path('module', 'ip2country') .'/ip2country.js');
-  drupal_add_css(drupal_get_path('module', 'ip2country') .'/ip2country.css');
+  drupal_add_js(drupal_get_path('module', 'ip2country') . '/ip2country.js');
+  drupal_add_css(drupal_get_path('module', 'ip2country') . '/ip2country.css');
 
   // Define submit handler function
   $form['#submit'][] = 'ip2country_admin_settings_submit';
@@ -150,8 +159,8 @@ function ip2country_admin_settings(&$form_state) {
     '#type'        => 'button',
     '#value'       => t('Update'),
     '#executes_submit_callback' => FALSE,
-    '#prefix'      => '<div>'. t('The IP to Country Database may be updated manually by pressing the Update button below.  Note, this may take several minutes.') .'</div>',
-    '#suffix'      => '<span id="dbthrobber" class="message">'. t('Database last updated on ') . format_date($update_time, 'custom', 'n/j/Y') .' at '. format_date($update_time, 'custom', 'H:i:s T') .'</span>',
+    '#prefix'      => '<div>' . t('The IP to Country Database may be updated manually by pressing the Update button below.  Note, this may take several minutes.') . '</div>',
+    '#suffix'      => '<span id="dbthrobber" class="message">' . t('Database last updated on @date at @time', array('@date' => format_date($update_time, 'custom', 'n/j/Y'), '@time' => format_date($update_time, 'custom', 'H:i:s T'))) . '</span>',
   );
 
   // Container for manual lookup
@@ -175,7 +184,7 @@ function ip2country_admin_settings(&$form_state) {
     '#type'        => 'button',
     '#value'       => t('Lookup'),
     '#executes_submit_callback' => FALSE,
-    '#prefix'      => '<div>'. t('An IP address may be looked up in the database by entering the address above then pressing the Lookup button below.') .'</div>',
+    '#prefix'      => '<div>' . t('An IP address may be looked up in the database by entering the address above then pressing the Lookup button below.') . '</div>',
     '#suffix'      => '<span id="lookup-message" class="message"></span>',
   );
 
@@ -194,11 +203,6 @@ function ip2country_admin_settings(&$form_state) {
     '#title'         => t('Admin Debug'),
     '#default_value' => variable_get('ip2country_debug', FALSE),
     '#description'   => t('Enables administrator to spoof an IP Address or Country for debugging purposes.'),
-//  '#ahah'          => array(
-//    'path'    => 'ip2country/autotextfields/callback',
-//    'wrapper' => 'ip2country_debug_choices',
-//    'effect'  => 'fade',
-//  ),
   );
 
   // Form to select Dummy Country or Dummy IP Address for testing
@@ -207,39 +211,25 @@ function ip2country_admin_settings(&$form_state) {
     '#title'         => t('Select which parameter to spoof'),
     '#default_value' => variable_get('ip2country_test_type', 0),
     '#options'       => array(t('Country'), t('IP Address')),
-//  '#ahah'          => array(
-//    'path'    => 'ip2country/autotextfields/callback',
-//    'wrapper' => 'ip2country_debug_choices',
-//    'effect'  => 'fade',
-//  ),
   );
 
-//if (radio for Country is on ...) {
-//if ($form_state['ip2country_debug_preferences']['ip2country_test_type'] == 0) {
-    $options = array();
-    $result = db_query("SELECT iso2, printable_name FROM {countries_api_countries} ORDER BY printable_name");
-    while ($country = db_fetch_array($result)) {
-      $options[$country['iso2']] = $country['printable_name'];
-    }
+  $default_country = variable_get('ip2country_test_country',
+                                  ip2country_get_country(ip_address()));
 
-    $dd = variable_get('ip2country_test_country', ip2country_get_country(ip_address()));
+  // Form to enter Country to spoof
+  $form['ip2country_debug_preferences']['ip2country_test_country'] = array(
+    '#type'          => 'select',
+    '#title'         => t('Country to use for testing'),
+    '#default_value' => $default_country,
+    '#options'       => country_get_list(),
+  );
 
-    // Form to enter Country to spoof
-    $form['ip2country_debug_preferences']['ip2country_test_country'] = array(
-      '#type'          => 'select',
-      '#title'         => t('Country to use for testing'),
-      '#default_value' => $dd,
-      '#options'       => $options,
-    );
-//}
-//else {
-    // Form to enter IP address to spoof
-    $form['ip2country_debug_preferences']['ip2country_test_ip_address'] = array(
-      '#type'          => 'textfield',
-      '#title'         => t('IP address to use for testing'),
-      '#default_value' => variable_get('ip2country_test_ip_address', ip_address()),
-    );
-//}
+  // Form to enter IP address to spoof
+  $form['ip2country_debug_preferences']['ip2country_test_ip_address'] = array(
+    '#type'          => 'textfield',
+    '#title'         => t('IP address to use for testing'),
+    '#default_value' => variable_get('ip2country_test_ip_address', ip_address()),
+  );
 
   return system_settings_form($form);
 }
@@ -270,7 +260,9 @@ function ip2country_admin_settings_submit($form, &$form_state) {
       // Dummy Country
       $country_code = $form_state['values']['ip2country_test_country'];
     }
-    drupal_set_message(t('Using DEBUG value for Country - @country', array('@country' => $country_code)));
+    $country_list = country_get_list();
+    $country_name = $country_list[$country_code];
+    drupal_set_message(t('Using DEBUG value for Country - @country (@code)', array('@country' => $country_name, '@code'    => $country_code)));
   }
   else {
     // Debug off - make sure we set/reset IP/Country to their real values

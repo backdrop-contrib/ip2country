@@ -7,7 +7,7 @@
 
 // Include function definition for ip2country_update_database(),
 // which is needed to initially fill the database after creation.
-include_once(drupal_get_path('module', 'ip2country') .'/ip2country.inc');
+include_once(drupal_get_path('module', 'ip2country') . '/ip2country.inc');
 
 /**
  * Implements hook_requirements().
@@ -85,15 +85,16 @@ function ip2country_schema() {
 /**
  * Implements hook_install().
  *
- * Creates database tables needed by this module.
+ * Populates database tables needed by this module.
  */
 function ip2country_install() {
 
-  /* Create tables */
-  drupal_install_schema('ip2country');
-
-  /* Populate the database */
-  ip2country_update_database();
+  // By default, this module will populate the database, But because it
+  // is so time-consuming, an option is available to turn this off for
+  // SimpleTest purposes.
+  if (variable_get('ip2country_populate_database_on_install', FALSE)) {
+    ip2country_update_database();
+  }
 }
 
 
@@ -105,10 +106,8 @@ function ip2country_install() {
  */
 function ip2country_uninstall() {
 
-  /* Remove all database tables created by this module */
-  drupal_uninstall_schema('ip2country');
-
   /* Remove all module variables from the database */
+  variable_del('ip2country_populate_database_on_install');
   variable_del('ip2country_debug');
   variable_del('ip2country_test_type');
   variable_del('ip2country_test_ip_address');

@@ -45,7 +45,7 @@ function ip2country_update_database($registry="arin") {
   //
   // Set a run-time long enough so the script won't break
   //
-  set_time_limit(10*60);  // 10 minutes!
+  drupal_set_time_limit(10*60);  // 10 minutes!
   //
   // Truncate the table to remove old data
   //
@@ -54,7 +54,7 @@ function ip2country_update_database($registry="arin") {
     //
     // Replace Registry source with chosen registry
     //
-    $ftp_file = str_replace("ftp.ripe", "ftp.". $registry, $ftp_file);
+    $ftp_file = str_replace("ftp.ripe", "ftp." . $registry, $ftp_file);
     //
     // RipeNCC is named ripe-ncc on APNIC registry
     //
@@ -78,7 +78,7 @@ function ip2country_update_database($registry="arin") {
       // Split each line
       //
       $parts = explode("|", $line);
-      if ($parts[2] != "ipv4" || count($parts) != 7)
+      if (count($parts) != 7 || $parts[2] != "ipv4")
         continue;
       //
       // The registry that owns the range
@@ -95,33 +95,23 @@ function ip2country_update_database($registry="arin") {
       $ip_end       = (int) ip2long($parts[3])+($parts[4]-1);
       $range_length = (int) $parts[4];
       //
-      // Prepare the query
-      //
-      $sql = "INSERT INTO {ip2country} (
-                country,
-                registry,
-                ip_range_first,
-                ip_range_last,
-                ip_range_length
-              )
-              VALUES ('%s', '%s', %d, %d, %d)";
-      //
       // Insert range into the DB
       //
-      db_query($sql,
-               $country_code,
-               $owner_registry,
-               min($ip_start, $ip_end),
-               max($ip_start, $ip_end),
-               $range_length
-      );
+      db_insert('ip2country')->fields(array(
+                'ip_range_first'  => min($ip_start, $ip_end),
+                'ip_range_last'   => max($ip_start, $ip_end),
+                'ip_range_length' => $range_length,
+                'country'         => $country_code,
+                'registry'        => $owner_registry,
+        )
+      )->execute();
       $entries++;
     }
   }
   //
   // Return record count in table
   //
-  variable_set('ip2country_last_update', time());
+  variable_set('ip2country_last_update', REQUEST_TIME);
   return $entries;
 }
 

@@ -46,7 +46,7 @@ function ip2country_help($path, $arg) {
       return t('Detects Country of user based on IP address.');
       break;
 
-    case 'admin/settings/ip2country':
+    case 'admin/config/location/ip2country':
       return t('Configuration settings for the ip2country module.');
       break;
   }
@@ -54,10 +54,15 @@ function ip2country_help($path, $arg) {
 
 
 /**
- * Implements hook_perm().
+ * Implements hook_permission().
  */
-function ip2country_perm() {
-  return array('administer ip2country');
+function ip2country_permission() {
+  return array(
+    'administer ip2country' => array(
+      'title'       => t('Administer IP lookup settings'),
+      'description' => t('Configure IP database and module test settings.'),
+    ),
+  );
 }
 
 
@@ -69,9 +74,9 @@ function ip2country_perm() {
  */
 function ip2country_cron() {
   if (variable_get('ip2country_last_update', 0) <=
-      time() - variable_get('ip2country_update_interval', 604800)) {
+      REQUEST_TIME - variable_get('ip2country_update_interval', 604800)) {
     ip2country_update_database(variable_get('ip2country_rir', 'arin'));
-    variable_set('ip2country_last_update', time());
+    variable_set('ip2country_last_update', REQUEST_TIME);
     if (variable_get('ip2country_watchdog', 1)) {
       watchdog('ip2country', 'Database updated from @registry server.', array('@registry' => drupal_strtoupper(variable_get('ip2country_rir', 'arin'))), WATCHDOG_NOTICE);
     }
@@ -85,7 +90,7 @@ function ip2country_cron() {
 function ip2country_menu() {
   $items = array();
 
-  $items['admin/settings/ip2country'] = array(
+  $items['admin/config/location/ip2country'] = array(
     'title'            => 'IP to Country Settings',
     'description'      => 'Configure the IP/Country settings',
     'access arguments' => array('administer ip2country'),
@@ -94,14 +99,14 @@ function ip2country_menu() {
     'type'             => MENU_NORMAL_ITEM,
     'file'             => 'ip2country.admin.inc',
   );
-  $items['admin/settings/ip2country/update'] = array(
+  $items['admin/config/location/ip2country/update'] = array(
     'title'            => 'Update Database',
     'access arguments' => array('administer ip2country'),
     'page callback'    => '_ip2country_update',
     'type'             => MENU_CALLBACK,
     'file'             => 'ip2country.admin.inc',
   );
-  $items['admin/settings/ip2country/lookup'] = array(
+  $items['admin/config/location/ip2country/lookup'] = array(
     'title'            => 'Lookup IP Address in Database',
     'access arguments' => array('administer ip2country'),
     'page callback'    => '_ip2country_lookup',
@@ -114,40 +119,35 @@ function ip2country_menu() {
 
 
 /**
- * Implements hook_user().
+ * Implements hook_user_login().
  *
  * Detects IP and determines country upon user login.
  */
-function ip2country_user($op, &$edit, &$account, $category = NULL) {
-  switch ($op) {
-    case 'login':
-      // Successful login. First determine user's country based on IP
-      $ip = ip_address();
+function ip2country_user_login(&$edit, &$account) {
+  // Successful login. First determine user's country based on IP
+  $ip = ip_address();
+  $country_code = ip2country_get_country($ip);
+
+  // Now check to see if this user has "administer ip2country" permission
+  // and if debug mode set.  If both are TRUE, use debug information
+  // instead of real information
+  if (user_access('administer ip2country') &&
+      variable_get('ip2country_debug', FALSE)) {
+    $type = variable_get('ip2country_test_type', 0);
+    if ($type == 0) {  // Debug Country entered
+      $country_code = variable_get('ip2country_test_country', 'US');
+    }
+    else {  // Debug IP entered
+      $ip = variable_get('ip2country_test_ip', $ip);
       $country_code = ip2country_get_country($ip);
+    }
+    drupal_set_message(t('Using DEBUG value for Country - @country', array('@country' => $country_code)));
+  }
 
-      // Now check to see if this user has "administer ip2country" permission
-      // and if debug mode set.  If both are TRUE, use debug information
-      // instead of real information
-      if (user_access('administer ip2country') &&
-          variable_get('ip2country_debug', FALSE)) {
-        $type = variable_get('ip2country_test_type', 0);
-        if ($type == 0) {  // Debug Country entered
-          $country_code = variable_get('ip2country_test_country', 'US');
-        }
-        else {  // Debug IP entered
-          $ip = variable_get('ip2country_test_ip', $ip);
-          $country_code = ip2country_get_country($ip);
-        }
-        drupal_set_message(t('Using DEBUG value for Country - @country', array('@country' => $country_code)));
-      }
-
-      // Finally, save country, if it has been determined
-      if ($country_code) {
-        // Store the ISO country code in the $user object
-        user_save($account, array('country_iso_code_2' => $country_code));
-      }
-
-      break;
+  // Finally, save country, if it has been determined
+  if ($country_code) {
+    // Store the ISO country code in the $user object
+    user_save($account, array('country_iso_code_2' => $country_code));
   }
 }
 
@@ -158,10 +158,14 @@ function ip2country_user($op, &$edit, &$account, $category = NULL) {
 
 
 /**
- * Gets the ISO 3166 2-character country Code from the IP address.
+ * Gets the ISO 3166 2-character country code from the IP address.
+ *
+ * @param
+ *   IP address.
  *
  * @return
- *   FALSE if the lookup failed to find a country for this IP.
+ *   ISO 3166-1 2-character country code for this IP address, or
+ *   FALSE if the lookup failed to find a country.
  */
 function ip2country_get_country($ip_address) {
   $ipl = ip2long($ip_address);
@@ -170,11 +174,11 @@ function ip2country_get_country($ip_address) {
   }
 
   // Locate IP within range
-  $sql = "SELECT country FROM {ip2country}
-          WHERE (%d >= ip_range_first AND %d <= ip_range_last) LIMIT 1";
-  $country_code = db_result(db_query($sql, $ipl, $ipl));
+  $sql    = "SELECT country FROM {ip2country}
+             WHERE (:start >= ip_range_first AND :end <= ip_range_last) LIMIT 1";
+  $result = db_query($sql, array(':start' => $ipl, ':end' => $ipl))->fetchField();
 
-  return $country_code;
+  return $result;
 }
 
 
@@ -183,6 +187,6 @@ function ip2country_get_country($ip_address) {
  */
 function ip2country_get_count() {
   $sql   = "SELECT COUNT(*) FROM {ip2country}";
-  $count = db_result(db_query($sql));
+  $count = db_query($sql)->fetchField();
   return (int) $count;
 }
