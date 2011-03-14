@@ -153,6 +153,12 @@ function ip2country_admin_settings(&$form_state) {
   );
 
   $update_time = variable_get('ip2country_last_update', 0);
+  if (!empty($update_time)) {
+    $message = t('Database last updated on @date at @time', array('@date' => format_date($update_time, 'custom', 'n/j/Y'), '@time' => format_date($update_time, 'custom', 'H:i:s T')));
+  }
+  else {
+    $message = t('Database is empty.  You may fill the database by pressing the @update button.', array('@update' => t('Update')));
+  }
 
   // Form to initiate manual updating of the IP-Country database
   $form['ip2country_database_update']['ip2country_update_database'] = array(
@@ -160,7 +166,7 @@ function ip2country_admin_settings(&$form_state) {
     '#value'       => t('Update'),
     '#executes_submit_callback' => FALSE,
     '#prefix'      => '<div>' . t('The IP to Country Database may be updated manually by pressing the Update button below.  Note, this may take several minutes.') . '</div>',
-    '#suffix'      => '<span id="dbthrobber" class="message">' . t('Database last updated on @date at @time', array('@date' => format_date($update_time, 'custom', 'n/j/Y'), '@time' => format_date($update_time, 'custom', 'H:i:s T'))) . '</span>',
+    '#suffix'      => '<span id="dbthrobber" class="message">' . $message . '</span>',
   );
 
   // Container for manual lookup
