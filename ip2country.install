@@ -92,9 +92,9 @@ function ip2country_install() {
   // By default, this module will populate the database, But because it
   // is so time-consuming, an option is available to turn this off for
   // SimpleTest purposes.
-  if (variable_get('ip2country_populate_database_on_install', FALSE)) {
-    ip2country_update_database();
-  }
+  //if (variable_get('ip2country_populate_database_on_install', FALSE)) {
+  //  ip2country_update_database();
+  //}
 }
 
 
