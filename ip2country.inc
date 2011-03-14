@@ -27,12 +27,12 @@ function ip2country_update_database($registry='arin') {
   //
   if ($registry == 'afrinic') {
     // afrinic only holds its own data - every other nic has all the data
-    $ftp_sites = array(
+    $ftp_urls = array(
       'ftp://ftp.ripe.net/pub/stats/afrinic/delegated-afrinic-latest',
     );
   }
   else {
-    $ftp_sites = array(
+    $ftp_urls = array(
       'ftp://ftp.ripe.net/pub/stats/arin/delegated-arin-latest',
       'ftp://ftp.ripe.net/pub/stats/apnic/delegated-apnic-latest',
       'ftp://ftp.ripe.net/pub/stats/lacnic/delegated-lacnic-latest',
@@ -49,8 +49,11 @@ function ip2country_update_database($registry='arin') {
   //
   // Truncate the table to remove old data
   //
-  db_query('TRUNCATE TABLE {ip2country}');
-  foreach ($ftp_sites as $ftp_file) {
+  ip2country_empty_database();
+  //
+  // Download data files from the chosen registry
+  //
+  foreach ($ftp_urls as $ftp_file) {
     //
     // Replace Registry source with chosen registry
     //
@@ -134,4 +137,12 @@ function _ip2country_fetch_page($url) {
   $html = curl_exec($curl);
   curl_close($curl);
   return $html;
+}
+
+
+/**
+ * Empties the ip2country table in the database.
+ */
+function ip2country_empty_database() {
+  db_truncate('ip2country')->execute();
 }
