@@ -20,24 +20,24 @@
  *   Regional Internet Registry from which to get the data.
  *   Allowed values are afrinic, apnic, arin (default), lacnic, or ripe.
  */
-function ip2country_update_database($registry="arin") {
+function ip2country_update_database($registry='arin') {
   $registry = drupal_strtolower(trim($registry));
   //
   // FTP files
   //
-  if ($registry == "afrinic") {
+  if ($registry == 'afrinic') {
     // afrinic only holds its own data - every other nic has all the data
     $ftp_sites = array(
-      "ftp://ftp.ripe.net/pub/stats/afrinic/delegated-afrinic-latest",
+      'ftp://ftp.ripe.net/pub/stats/afrinic/delegated-afrinic-latest',
     );
   }
   else {
     $ftp_sites = array(
-      "ftp://ftp.ripe.net/pub/stats/arin/delegated-arin-latest",
-      "ftp://ftp.ripe.net/pub/stats/apnic/delegated-apnic-latest",
-      "ftp://ftp.ripe.net/pub/stats/lacnic/delegated-lacnic-latest",
-      "ftp://ftp.ripe.net/pub/stats/afrinic/delegated-afrinic-latest",
-      "ftp://ftp.ripe.net/pub/stats/ripencc/delegated-ripencc-latest",
+      'ftp://ftp.ripe.net/pub/stats/arin/delegated-arin-latest',
+      'ftp://ftp.ripe.net/pub/stats/apnic/delegated-apnic-latest',
+      'ftp://ftp.ripe.net/pub/stats/lacnic/delegated-lacnic-latest',
+      'ftp://ftp.ripe.net/pub/stats/afrinic/delegated-afrinic-latest',
+      'ftp://ftp.ripe.net/pub/stats/ripencc/delegated-ripencc-latest',
     );
   }
 
@@ -49,17 +49,17 @@ function ip2country_update_database($registry="arin") {
   //
   // Truncate the table to remove old data
   //
-  db_query("TRUNCATE TABLE {ip2country}");
+  db_query('TRUNCATE TABLE {ip2country}');
   foreach ($ftp_sites as $ftp_file) {
     //
     // Replace Registry source with chosen registry
     //
-    $ftp_file = str_replace("ftp.ripe", "ftp." . $registry, $ftp_file);
+    $ftp_file = str_replace('ftp.ripe', 'ftp.' . $registry, $ftp_file);
     //
     // RipeNCC is named ripe-ncc on APNIC registry
     //
-    if ($registry == "apnic")
-      $ftp_file = str_replace("stats/ripencc/", "stats/ripe-ncc/", $ftp_file);
+    if ($registry == 'apnic')
+      $ftp_file = str_replace('stats/ripencc/', 'stats/ripe-ncc/', $ftp_file);
     //
     // Fetch the FTP file using cURL
     //
@@ -77,8 +77,8 @@ function ip2country_update_database($registry="arin") {
       //
       // Split each line
       //
-      $parts = explode("|", $line);
-      if (count($parts) != 7 || $parts[2] != "ipv4")
+      $parts = explode('|', $line);
+      if (count($parts) != 7 || $parts[2] != 'ipv4')
         continue;
       //
       // The registry that owns the range
@@ -126,7 +126,7 @@ function _ip2country_fetch_page($url) {
   $curl = curl_init();
   curl_setopt($curl, CURLOPT_URL, $url);
   curl_setopt($curl, CURLOPT_TIMEOUT, 60*5);
-  curl_setopt($curl, CURLOPT_USERAGENT, "Drupal (+http://drupal.org/)");
+  curl_setopt($curl, CURLOPT_USERAGENT, 'Drupal (+http://drupal.org/)');
   curl_setopt($curl, CURLOPT_HEADER, 0);
   curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
   curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
