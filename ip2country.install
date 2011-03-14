@@ -5,9 +5,6 @@
  * Install, update, and uninstall functions for the ip2country module.
  */
 
-// Include function definition for ip2country_update_database(),
-// which is needed to initially fill the database after creation.
-include_once(drupal_get_path('module', 'ip2country') . '/ip2country.inc');
 
 /**
  * Implements hook_requirements().
@@ -86,15 +83,19 @@ function ip2country_schema() {
  * Implements hook_install().
  *
  * Populates database tables needed by this module.
+ *
+ * By default, this module will NOT populate the database because it
+ * is so time-consuming. An option is available to populate the database
+ * automatically on install, intended for use by install profiles.
  */
 function ip2country_install() {
-
-  // By default, this module will populate the database, But because it
-  // is so time-consuming, an option is available to turn this off for
-  // SimpleTest purposes.
-  //if (variable_get('ip2country_populate_database_on_install', FALSE)) {
-  //  ip2country_update_database();
-  //}
+  //
+  // Set the variable to TRUE before installing this module to
+  // populate database table on install.
+  //
+  if (variable_get('ip2country_populate_database_on_install', FALSE)) {
+    ip2country_update_database();
+  }
 }
 
 
@@ -106,7 +107,7 @@ function ip2country_install() {
  */
 function ip2country_uninstall() {
 
-  /* Remove all module variables from the database */
+  // Remove all module variables from the database
   variable_del('ip2country_populate_database_on_install');
   variable_del('ip2country_debug');
   variable_del('ip2country_test_type');
@@ -128,10 +129,10 @@ function ip2country_uninstall() {
 function ip2country_update_1() {
   $ret = array();
 
-  /* Remove all database tables created by this module */
+  // Remove all database tables created by this module
   $ret[] = update_sql("ALTER TABLE {uc_ip2country} RENAME TO {ip2country}");
 
-  /* Rename variables while  preserving setting values */
+  // Rename variables while  preserving setting values
   variable_set('ip2country_debug',
                variable_get('uc_ip2country_debug', FALSE));
   variable_set('ip2country_test_type',
@@ -151,7 +152,7 @@ function ip2country_update_1() {
   variable_set('ip2country_watchdog',
                variable_get('uc_ip2country_watchdog', 1));
 
-  /* Remove all old variables from the database */
+  // Remove all old variables from the database
   variable_del('uc_ip2country_debug');
   variable_del('uc_ip2country_test_type');
   variable_del('uc_ip2country_test_ip_address');
