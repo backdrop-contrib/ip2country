@@ -84,16 +84,16 @@ function ip2country_schema() {
  *
  * Populates database tables needed by this module.
  *
- * By default, this module will NOT populate the database because it
- * is so time-consuming. An option is available to populate the database
- * automatically on install, intended for use by install profiles.
+ * By default, this module WILL populate the database. But because it
+ * is so time-consuming, an option is available to not populate the
+ * database automatically on install, intended for use by SimpleTest.
  */
 function ip2country_install() {
   //
-  // Set the variable to TRUE before installing this module to
-  // populate database table on install.
+  // Set the variable to FALSE before installing this module to
+  // leave the database table empty on install.
   //
-  if (variable_get('ip2country_populate_database_on_install', FALSE)) {
+  if (variable_get('ip2country_populate_database_on_install', TRUE)) {
     ip2country_update_database();
   }
 }
