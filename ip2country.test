@@ -15,7 +15,7 @@
 class ip2countryTestCase extends DrupalWebTestCase {
 
   /**
-   * Implements of getInfo().
+   * Implements DrupalWebTestCase::getInfo().
    */
   public static function getInfo() {
     return array(
@@ -27,7 +27,7 @@ class ip2countryTestCase extends DrupalWebTestCase {
 
 
   /**
-   * Implements of setUp().
+   * Overrides DrupalWebTestCase::setUp().
    */
   function setUp() {
     // Don't install ip2country! parent::setUp() creates a clean
@@ -41,6 +41,7 @@ class ip2countryTestCase extends DrupalWebTestCase {
     // Explicitly enable the module so that it will have access
     // to the variable we set above.
     $status = module_enable(array('ip2country'), FALSE);
+    $this->resetAll();  // The secret ingredient
 
     $this->assertTrue(
       $status,
@@ -52,18 +53,55 @@ class ip2countryTestCase extends DrupalWebTestCase {
     );
 
     // Create and log in our test user.
-    //$admin_user = $this->drupalCreateUser(array('administer ip2country'));
-    $admin_user = $this->drupalCreateUser();
+    $admin_user = $this->drupalCreateUser(array('administer ip2country'));
+    //$admin_user = $this->drupalCreateUser();
     $this->drupalLogin($admin_user);
   }
 
 
   /**
-   * Tests IP lookup for IP in DB
-   * Tests IP lookup for IP NOT in DB
+   * Tests IP lookup for addresses in / not in the database.
    */
   function testIPLookup() {
-    $this->pass(t('testIPLookup passed.'));
+    ip2country_update_database('arin');
+
+    $this->assertTrue(
+      ($count = ip2country_get_count()) != 0,
+      t('Database has been updated with @rows rows.', array('@rows' => $count))
+    );
+
+    // Real working IPs
+    $ip_array = array(
+      '125.29.33.201', '212.58.224.138',
+      '184.51.240.110', '210.87.9.66'
+    );
+    foreach ($ip_array as $ip_address) {
+      $country = ip2country_get_country($ip_address);
+      $this->assertTrue(
+        $country,
+        t('@ip found, resolved to @country.', array('@ip' => $ip_address, '@country' => $country))
+      );
+      $this->pass(t('testIPLookup passed.'));
+    }
+
+    // Invalid and reserved IPs
+    $ip_array = array(
+      '127.0.0.1', '358.1.1.0'
+    );
+    foreach ($ip_array as $ip_address) {
+      $country = ip2country_get_country($ip_address);
+      $this->assertFalse(
+        $country,
+        t('@ip not found in database.', array('@ip' => $ip_address))
+      );
+      $this->pass(t('testIPLookup passed.'));
+    }
+
+    ip2country_empty_database();
+    $this->assertTrue(
+      (ip2country_get_count() == 0),
+      t('Database is Empty.')
+    );
   }
 
   /**
@@ -138,11 +176,24 @@ class ip2countryTestCase extends DrupalWebTestCase {
       t('Database is Empty.')
     );
 
-    ip2country_update_database('arin');
+    $rir = array_rand(array(
+//    'afrinic' => 'AFRINIC', // Don't use AFRINIC because it's incomplete
+      'arin'    => 'ARIN',
+      'apnic'   => 'APNIC',
+      'lacnic'  => 'LACNIC',
+      'ripe'    => 'RIPE'
+    ));
+    ip2country_update_database($rir);
 
     $this->assertTrue(
       ($count = ip2country_get_count()) != 0,
-      t('Database has been updated with @rows rows.', array('@rows' => $count))
+      t('Database has been updated from %rir with @rows rows.', array('%rir' => strtoupper($rir), '@rows' => $count))
+    );
+
+    ip2country_empty_database();
+    $this->assertTrue(
+      (ip2country_get_count() == 0),
+      t('Database is Empty.')
     );
   }
 
@@ -154,7 +205,7 @@ class ip2countryTestCase extends DrupalWebTestCase {
     $rows = db_select('ip2country')->countQuery()->execute()->fetchField();
     //$this->assertText(
     //  t('The IP to Country database has been updated from @rir. @rows rows affected.', array('@rir' => $rir, '@rows' => $rows)),
-    //   t('Database was updated manually.')
+    //  t('Database was updated manually.')
     //);
     $this->pass(t('testDBManualUpdate passed.'));
   }
@@ -174,14 +225,15 @@ class ip2countryTestCase extends DrupalWebTestCase {
 
     // Turn on logging
     $edit = array(
-      'ip2country_watchdog' => array( 'test' => TRUE),
+      'ip2country_watchdog' => array('test' => TRUE),
     );
     //$this->drupalPost(
     //  'admin/store/settings/countries/edit',
-    //   $edit, t('Import')
+    //  $edit,
+    //  t('Import')
     //);
     //$this->assertText(
-    //  t('Database updated from @rir server.', array('@rir' => $rir),
+    //  t('Database updated from @rir server.', array('@rir' => $rir)),
     //  t('Watchdog reported database update.')
     //);
 
