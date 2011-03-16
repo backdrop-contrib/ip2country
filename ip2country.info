@@ -3,4 +3,4 @@ description = Determines country the user is located in, based on IP address
 package = Location
 core = 7.x
 configure = admin/config/location/ip2country
-files[] = ip2country.test
+files[] = tests/ip2country.test

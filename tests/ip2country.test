@@ -14,14 +14,21 @@
  */
 class ip2countryTestCase extends DrupalWebTestCase {
 
+  /** Admin user */
+  protected $admin_user;
+
+  /** Authenticated but unprivileged user */
+  protected $unpriv_user;
+
+
   /**
    * Implements DrupalWebTestCase::getInfo().
    */
   public static function getInfo() {
     return array(
-      'name'        => t('IP/Country lookup '),
-      'description' => t('Test operations of IP to Country module.'),
-      'group'       => t('IP to Country'),
+      'name'        => 'IP/Country lookup',
+      'description' => 'Test operations of IP to Country module.',
+      'group'       => 'IP to Country',
     );
   }
 
@@ -53,9 +60,12 @@ class ip2countryTestCase extends DrupalWebTestCase {
     );
 
     // Create and log in our test user.
-    $admin_user = $this->drupalCreateUser(array('administer ip2country'));
-    //$admin_user = $this->drupalCreateUser();
-    $this->drupalLogin($admin_user);
+    $this->admin_user = $this->drupalCreateUser(array(
+      'administer site configuration',
+      'access site reports',
+      'administer ip2country',
+    ));
+    $this->unpriv_user = $this->drupalCreateUser();
   }
 
 
@@ -119,9 +129,72 @@ class ip2countryTestCase extends DrupalWebTestCase {
   }
 
   /**
-   * Tests anonymous vs authenticated users
+   * Tests module permissions / access to configuration page.
    */
   function testUserAccess() {
+    //
+    // As anonymous user
+    //
+    $this->drupalGet('admin/config');
+    $this->assertText('Access denied');
+    $this->assertText('You are not authorized to access this page.');
+
+    $this->drupalGet('admin/config/location/ip2country');
+    $this->assertText('Access denied');
+    $this->assertText('You are not authorized to access this page.');
+
+    //
+    // As authenticated / unprivileged user
+    //
+    $this->drupalLogin($this->unpriv_user);
+    $this->drupalGet('admin/config');
+    $this->assertText('Access denied');
+    $this->assertText('You are not authorized to access this page.');
+
+    $this->drupalGet('admin/config/location/ip2country');
+    $this->assertText('Access denied');
+    $this->assertText('You are not authorized to access this page.');
+
+    //
+    // As admin user
+    //
+    $this->drupalLogin($this->admin_user);
+    $this->drupalGet('admin/config');
+    $this->assertText('IP to Country Settings');
+    $this->assertText('Configure the IP/Country settings');
+
+    $this->drupalGet('admin/config/location/ip2country');
+    $this->assertText('IP to Country Settings');
+    $this->assertText('Configuration settings for the ip2country module.');
+    $this->assertText('Database is empty.');
+    $this->assertFieldByName(
+      'ip2country_watchdog',
+      1,
+      t('Database updates are being logged to watchdog.')
+    );
+
+    // Update database via UI
+    $this->drupalPost(
+      'admin/config/location/ip2country',
+      array(),
+      t('Update')
+    );
+    $this->assertText(
+      t('The IP to Country database has been updated from')
+    );
+
+    // Check watchdog
+    $this->drupalGet('admin/reports/dblog');
+    $this->assertText(t('Recent log messages'));
+    $this->assertText('ip2country');
+    $this->assertText(t('Database updated from'));
+
+    // Drill down
+    $this->clickLink(t('admin'));
+    $this->assertText(t('Details'));
+    $this->assertText('ip2country');
+    $this->assertText(t('Database updated from'));
+    
     $this->pass(t('testUserAccess passed.'));
   }
 
@@ -241,7 +314,7 @@ class ip2countryTestCase extends DrupalWebTestCase {
   }
 
   /**
-   * Implements of tearDown().
+   * Overrides DrupalWebTestCase::tearDown().
    */
   function tearDown() {
     // Perform any clean-up tasks.
