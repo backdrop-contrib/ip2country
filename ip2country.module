@@ -46,7 +46,7 @@ function ip2country_help($path, $arg) {
       return t('Detects Country of user based on IP address.');
       break;
 
-    case 'admin/config/location/ip2country':
+    case 'admin/config/people/ip2country':
       return t('Configuration settings for the ip2country module.');
       break;
   }
@@ -90,23 +90,23 @@ function ip2country_cron() {
 function ip2country_menu() {
   $items = array();
 
-  $items['admin/config/location/ip2country'] = array(
-    'title'            => 'IP to Country Settings',
-    'description'      => 'Configure the IP/Country settings',
+  $items['admin/config/people/ip2country'] = array(
+    'title'            => 'User location',
+    'description'      => 'Settings for determining user location from IP address.',
     'access arguments' => array('administer ip2country'),
     'page callback'    => 'drupal_get_form',
     'page arguments'   => array('ip2country_admin_settings'),
     'type'             => MENU_NORMAL_ITEM,
     'file'             => 'ip2country.admin.inc',
   );
-  $items['admin/config/location/ip2country/update'] = array(
+  $items['admin/config/people/ip2country/update'] = array(
     'title'            => 'Update Database',
     'access arguments' => array('administer ip2country'),
     'page callback'    => '_ip2country_update',
     'type'             => MENU_CALLBACK,
     'file'             => 'ip2country.admin.inc',
   );
-  $items['admin/config/location/ip2country/lookup'] = array(
+  $items['admin/config/people/ip2country/lookup'] = array(
     'title'            => 'Lookup IP Address in Database',
     'access arguments' => array('administer ip2country'),
     'page callback'    => '_ip2country_lookup',

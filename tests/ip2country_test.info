@@ -1,0 +1,5 @@
+name = ip2country hook tests
+description = Support module for ip2country tests
+package = Location
+core = 7.x
+hidden = TRUE

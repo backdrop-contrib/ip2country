@@ -2,5 +2,5 @@ name = IP-based determination of Country
 description = Determines country the user is located in, based on IP address
 package = Location
 core = 7.x
-configure = admin/config/location/ip2country
+configure = admin/config/people/ip2country
 files[] = tests/ip2country.test

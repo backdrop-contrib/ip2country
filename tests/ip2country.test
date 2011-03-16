@@ -62,6 +62,7 @@ class ip2countryTestCase extends DrupalWebTestCase {
     // Create and log in our test user.
     $this->admin_user = $this->drupalCreateUser(array(
       'administer site configuration',
+      'access administration pages',
       'access site reports',
       'administer ip2country',
     ));
@@ -139,7 +140,7 @@ class ip2countryTestCase extends DrupalWebTestCase {
     $this->assertText('Access denied');
     $this->assertText('You are not authorized to access this page.');
 
-    $this->drupalGet('admin/config/location/ip2country');
+    $this->drupalGet('admin/config/people/ip2country');
     $this->assertText('Access denied');
     $this->assertText('You are not authorized to access this page.');
 
@@ -151,20 +152,21 @@ class ip2countryTestCase extends DrupalWebTestCase {
     $this->assertText('Access denied');
     $this->assertText('You are not authorized to access this page.');
 
-    $this->drupalGet('admin/config/location/ip2country');
+    $this->drupalGet('admin/config/people/ip2country');
     $this->assertText('Access denied');
     $this->assertText('You are not authorized to access this page.');
+    $this->drupalLogout();
 
     //
     // As admin user
     //
     $this->drupalLogin($this->admin_user);
     $this->drupalGet('admin/config');
-    $this->assertText('IP to Country Settings');
-    $this->assertText('Configure the IP/Country settings');
+    $this->assertText('User location');
+    $this->assertText('Settings for determining user location from IP address.');
 
-    $this->drupalGet('admin/config/location/ip2country');
-    $this->assertText('IP to Country Settings');
+    $this->drupalGet('admin/config/people/ip2country');
+    $this->assertText('User location');
     $this->assertText('Configuration settings for the ip2country module.');
     $this->assertText('Database is empty.');
     $this->assertFieldByName(
@@ -172,11 +174,16 @@ class ip2countryTestCase extends DrupalWebTestCase {
       1,
       t('Database updates are being logged to watchdog.')
     );
+    $this->assertFieldByName(
+      'ip2country_rir',
+      'arin',
+      t('Database updates from arin.')
+    );
 
     // Update database via UI
     $this->drupalPost(
-      'admin/config/location/ip2country',
-      array(),
+      'admin/config/people/ip2country',
+      array(),   // set options like rir and test_country here
       t('Update')
     );
     $this->assertText(
@@ -195,6 +202,8 @@ class ip2countryTestCase extends DrupalWebTestCase {
     $this->assertText('ip2country');
     $this->assertText(t('Database updated from'));
     
+    $this->drupalLogout();
+
     $this->pass(t('testUserAccess passed.'));
   }
 
