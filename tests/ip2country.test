@@ -9,8 +9,8 @@
 
 
 /**
- * 1 class for unit tests, 1 class for functional tests
- * 1 class for DB update tests because they take so long
+ * Need 1 class for unit tests, 1 class for functional tests
+ * 1 function for DB tests because filling takes so long
  */
 class ip2countryTestCase extends DrupalWebTestCase {
 
@@ -37,9 +37,11 @@ class ip2countryTestCase extends DrupalWebTestCase {
    * Overrides DrupalWebTestCase::setUp().
    */
   function setUp() {
+    //
     // Don't install ip2country! parent::setUp() creates a clean
     // environment, so we can influence the install before we call setUp().
     // We don't want the DB populated, so we'll manually install ip2country.
+    //
     parent::setUp();
 
     // Turn off automatic DB download when module is installed.
@@ -92,7 +94,7 @@ class ip2countryTestCase extends DrupalWebTestCase {
         $country,
         t('@ip found, resolved to @country.', array('@ip' => $ip_address, '@country' => $country))
       );
-      $this->pass(t('testIPLookup passed.'));
+      $this->pass(t('Valid IP found in database.'));
     }
 
     // Invalid and reserved IPs
@@ -105,7 +107,7 @@ class ip2countryTestCase extends DrupalWebTestCase {
         $country,
         t('@ip not found in database.', array('@ip' => $ip_address))
       );
-      $this->pass(t('testIPLookup passed.'));
+      $this->pass(t('Invalid IP not found in database.'));
     }
 
     ip2country_empty_database();
@@ -134,27 +136,37 @@ class ip2countryTestCase extends DrupalWebTestCase {
    */
   function testUserAccess() {
     //
-    // As anonymous user
+    // Set a run-time long enough so the script won't break
+    //
+    drupal_set_time_limit(10*60);  // 10 minutes!
+
+    //
+    // Test as anonymous user
     //
     $this->drupalGet('admin/config');
-    $this->assertText('Access denied');
-    $this->assertText('You are not authorized to access this page.');
+    $this->assertText(t('Access denied'));
+    $this->assertText(t('You are not authorized to access this page.'));
 
     $this->drupalGet('admin/config/people/ip2country');
-    $this->assertText('Access denied');
-    $this->assertText('You are not authorized to access this page.');
+    $this->assertText(t('Access denied'));
+    $this->assertText(t('You are not authorized to access this page.'));
+
+    // Try to trigger DB update as anonymous
+    $this->drupalGet('admin/config/people/ip2country/update/arin');
+    $this->assertText(t('Access denied'));
+    $this->assertText(t('You are not authorized to access this page.'));
 
     //
-    // As authenticated / unprivileged user
+    // Test as authenticated but unprivileged user
     //
     $this->drupalLogin($this->unpriv_user);
     $this->drupalGet('admin/config');
-    $this->assertText('Access denied');
-    $this->assertText('You are not authorized to access this page.');
+    $this->assertText(t('Access denied'));
+    $this->assertText(t('You are not authorized to access this page.'));
 
     $this->drupalGet('admin/config/people/ip2country');
-    $this->assertText('Access denied');
-    $this->assertText('You are not authorized to access this page.');
+    $this->assertText(t('Access denied'));
+    $this->assertText(t('You are not authorized to access this page.'));
     $this->drupalLogout();
 
     //
@@ -162,13 +174,13 @@ class ip2countryTestCase extends DrupalWebTestCase {
     //
     $this->drupalLogin($this->admin_user);
     $this->drupalGet('admin/config');
-    $this->assertText('User location');
-    $this->assertText('Settings for determining user location from IP address.');
+    $this->assertText(t('User location'));
+    $this->assertText(t('Settings for determining user location from IP address.'));
 
     $this->drupalGet('admin/config/people/ip2country');
-    $this->assertText('User location');
-    $this->assertText('Configuration settings for the ip2country module.');
-    $this->assertText('Database is empty.');
+    $this->assertText(t('User location'));
+    $this->assertText(t('Configuration settings for the ip2country module.'));
+    $this->assertText(t('Database is empty.'));
     $this->assertFieldByName(
       'ip2country_watchdog',
       1,
@@ -180,31 +192,33 @@ class ip2countryTestCase extends DrupalWebTestCase {
       t('Database updates from arin.')
     );
 
-    // Update database via UI
-    $this->drupalPost(
-      'admin/config/people/ip2country',
-      array(),   // set options like rir and test_country here
-      t('Update')
-    );
+    // Update database via UI - choose a random RIR
+    // (Actually short-circuiting the UI here because of the Ajax call)
+    $rir = array_rand(array(
+      'afrinic' => 'AFRINIC',
+//    'arin'    => 'ARIN',
+//    'apnic'   => 'APNIC',
+//    'lacnic'  => 'LACNIC',
+//    'ripe'    => 'RIPE'
+    ));
+    $this->drupalGet('admin/config/people/ip2country/update/' . $rir);
     $this->assertText(
-      t('The IP to Country database has been updated from')
+      t('The IP to Country database has been updated from @rir.', array('@rir' => strtoupper($rir)))
     );
 
     // Check watchdog
     $this->drupalGet('admin/reports/dblog');
     $this->assertText(t('Recent log messages'));
     $this->assertText('ip2country');
-    $this->assertText(t('Database updated from'));
+    $this->assertLink(t('Database updated from @rir server.', array('@rir' => strtoupper($rir))));
 
     // Drill down
-    $this->clickLink(t('admin'));
+    $this->clickLink(t('Database updated from @rir server.', array('@rir' => strtoupper($rir))));
     $this->assertText(t('Details'));
     $this->assertText('ip2country');
-    $this->assertText(t('Database updated from'));
+    $this->assertText(t('Database updated from @rir server.', array('@rir' => strtoupper($rir))));
     
     $this->drupalLogout();
-
-    $this->pass(t('testUserAccess passed.'));
   }
 
   /**
@@ -258,6 +272,7 @@ class ip2countryTestCase extends DrupalWebTestCase {
       t('Database is Empty.')
     );
 
+    // Choose a random RIR
     $rir = array_rand(array(
 //    'afrinic' => 'AFRINIC', // Don't use AFRINIC because it's incomplete
       'arin'    => 'ARIN',
