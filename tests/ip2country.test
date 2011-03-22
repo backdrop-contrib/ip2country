@@ -95,11 +95,20 @@ class ip2countryTestCase extends DrupalWebTestCase {
       '184.51.240.110', '210.87.9.66'
     );
     foreach ($ip_array as $ip_address) {
+      // Test dotted quad string form of address
       $country = ip2country_get_country($ip_address);
       $this->assertTrue(
         $country,
         t('@ip found, resolved to @country.', array('@ip' => $ip_address, '@country' => $country))
       );
+
+      // Test 32-bit unsigned long form of address
+      $usl_country = ip2country_get_country(ip2long($ip_address));
+      $this->assertTrue(
+        $usl_country == $country,
+        t('Unsigned long lookup found same country code.')
+      );
+
       $this->pass(t('Valid IP found in database.'));
     }
 
