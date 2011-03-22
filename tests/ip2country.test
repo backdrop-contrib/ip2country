@@ -44,6 +44,12 @@ class ip2countryTestCase extends DrupalWebTestCase {
     //
     parent::setUp();
 
+    //
+    // Set a run-time long enough so the script won't break
+    //
+    $this->timeLimit = 15 * 60;  // 15 minutes!
+    drupal_set_time_limit($this->timeLimit);
+
     // Turn off automatic DB download when module is installed.
     variable_set('ip2country_populate_database_on_install', FALSE);
 
@@ -136,11 +142,6 @@ class ip2countryTestCase extends DrupalWebTestCase {
    */
   function testUserAccess() {
     //
-    // Set a run-time long enough so the script won't break
-    //
-    drupal_set_time_limit(10*60);  // 10 minutes!
-
-    //
     // Test as anonymous user
     //
     $this->drupalGet('admin/config');
@@ -196,10 +197,10 @@ class ip2countryTestCase extends DrupalWebTestCase {
     // (Actually short-circuiting the UI here because of the Ajax call)
     $rir = array_rand(array(
       'afrinic' => 'AFRINIC',
-//    'arin'    => 'ARIN',
-//    'apnic'   => 'APNIC',
-//    'lacnic'  => 'LACNIC',
-//    'ripe'    => 'RIPE'
+      'arin'    => 'ARIN',
+      'apnic'   => 'APNIC',
+      'lacnic'  => 'LACNIC',
+      'ripe'    => 'RIPE'
     ));
     $this->drupalGet('admin/config/people/ip2country/update/' . $rir);
     $this->assertText(
