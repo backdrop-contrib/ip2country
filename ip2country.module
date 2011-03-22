@@ -163,6 +163,10 @@ function ip2country_user_login(&$edit, &$account) {
  * @param
  *   IP address.
  *
+ * @param $ip_address
+ *   IP address either as a dotted quad string (e.g. "127.0.0.1") or
+ *   as a 32-bit unsigned long integer.
+ *
  * @return
  *   ISO 3166-1 2-character country code for this IP address, or
  *   FALSE if the lookup failed to find a country.
@@ -170,7 +174,7 @@ function ip2country_user_login(&$edit, &$account) {
 function ip2country_get_country($ip_address) {
   $ipl = ip2long($ip_address);
   if (is_long($ip_address)) {
-    $ipl = ip_address;
+    $ipl = $ip_address;
   }
 
   // Locate IP within range
