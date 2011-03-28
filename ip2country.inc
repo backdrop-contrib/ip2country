@@ -11,6 +11,7 @@
  * http://www.tellinya.com/read/2007/06/03/ip2country-translate-ip-address-to-country-code/
  */
 
+
 /**
  * Updates the database.
  *
@@ -127,15 +128,18 @@ function ip2country_update_database($registry='arin') {
  */
 function _ip2country_fetch_page($url) {
   $curl = curl_init();
+
   curl_setopt($curl, CURLOPT_URL, $url);
   curl_setopt($curl, CURLOPT_TIMEOUT, 60*5);
   curl_setopt($curl, CURLOPT_USERAGENT, 'Drupal (+http://drupal.org/)');
-  curl_setopt($curl, CURLOPT_HEADER, 0);
-  curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-  curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
-  curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+  curl_setopt($curl, CURLOPT_HEADER, FALSE);
+  curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+  curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
+  curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+
   $html = curl_exec($curl);
   curl_close($curl);
+
   return $html;
 }
 
