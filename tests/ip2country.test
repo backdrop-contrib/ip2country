@@ -47,7 +47,7 @@ class ip2countryTestCase extends DrupalWebTestCase {
     //
     // Set a run-time long enough so the script won't break
     //
-    $this->timeLimit = 15 * 60;  // 15 minutes!
+    $this->timeLimit = 3 * 60;  // 3 minutes!
     drupal_set_time_limit($this->timeLimit);
 
     // Turn off automatic DB download when module is installed.
@@ -67,7 +67,7 @@ class ip2countryTestCase extends DrupalWebTestCase {
       t('Database is empty.')
     );
 
-    // Create and log in our test user.
+    // Create our test users.
     $this->admin_user = $this->drupalCreateUser(array(
       'administer site configuration',
       'access administration pages',
