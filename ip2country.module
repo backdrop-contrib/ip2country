@@ -40,10 +40,12 @@ module_load_include('inc', 'ip2country', 'ip2country');
 /**
  * Implements hook_help().
  */
-function ip2country_help($path, $arg) {
+function ip2country_help($path = 'admin/help#ip2country', $arg = NULL) {
   switch ($path) {
     case 'admin/help#ip2country':
-      return t('Detects Country of user based on IP address.');
+    case 'admin/help/ip2country':
+      //module_load_include('inc', 'ip2country', 'ip2country.help');
+      return t('Determines the Country where the user is located based on the IP address used.');
       break;
 
     case 'admin/config/people/ip2country':
@@ -167,7 +169,7 @@ function ip2country_user_presave(&$edit, $account, $category) {
 /**
  * Implements hook_user_load().
  *
- * Takes care of storing country data into {users}.data.
+ * Takes care of restoring country data from {users}.data.
  */
 function ip2country_user_load($users) {
   foreach ($users as $user) {
