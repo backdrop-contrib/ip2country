@@ -62,8 +62,9 @@ function ip2country_update_database($registry='arin') {
     //
     // RipeNCC is named ripe-ncc on APNIC registry
     //
-    if ($registry == 'apnic')
+    if ($registry == 'apnic') {
       $ftp_file = str_replace('stats/ripencc/', 'stats/ripe-ncc/', $ftp_file);
+    }
     //
     // Fetch the FTP file using cURL
     //
@@ -82,8 +83,9 @@ function ip2country_update_database($registry='arin') {
       // Split each line
       //
       $parts = explode('|', $line);
-      if (count($parts) != 7 || $parts[2] != 'ipv4')
+      if (count($parts) != 7 || $parts[2] != 'ipv4') {
         continue;
+      }
       //
       // The registry that owns the range
       //
