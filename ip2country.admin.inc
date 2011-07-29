@@ -110,7 +110,7 @@ function _ip2country_lookup($arg) {
  * @see ip2country_admin_settings_submit()
  * @ingroup forms
  */
-function ip2country_admin_settings(&$form_state) {
+function ip2country_admin_settings() {
   drupal_add_js(drupal_get_path('module', 'ip2country') . '/ip2country.js');
   drupal_add_css(drupal_get_path('module', 'ip2country') . '/ip2country.css');
 
