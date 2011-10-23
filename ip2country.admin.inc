@@ -9,7 +9,7 @@
  * because a user may connect through an anonymizing proxy, or may be in
  * an unusual case, such as getting service from a neighboring country,
  * or using an IP block leased from a company in another country.
- * Additionaly, users accessing a server on a local network may be using
+ * Additionally, users accessing a server on a local network may be using
  * an IP that is not assigned to any country (e.g. 192.168.x.x).
  *
  * Country determination occurs upon user login.  If a country can be
@@ -22,7 +22,7 @@
  * one of the 5 official Regional Internet Registries (RIR) responsible
  * for assigning IP addresses.  The claim is the database is 98% accurate,
  * with most of the problems coming from users in less-developed countries.
- * Regardless, there's no more-authoritive source of this information.
+ * Regardless, there's no more-authoritative source of this information.
  *
  * @author Tim Rohaly.    <http://drupal.org/user/202830>
  */
