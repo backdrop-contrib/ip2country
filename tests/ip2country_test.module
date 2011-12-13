@@ -45,7 +45,7 @@ function ip2country_test_menu() {
   $items = array();
 
   $items['admin/config/location/ip2country'] = array(
-    'title'            => 'IP to Country Settings',
+    'title'            => 'IP to Country settings',
     'description'      => 'Configure the IP/Country settings',
     'access arguments' => array('administer ip2country'),
     'page callback'    => 'drupal_get_form',
@@ -54,14 +54,14 @@ function ip2country_test_menu() {
     'file'             => 'ip2country.admin.inc',
   );
   $items['admin/config/location/ip2country/update'] = array(
-    'title'            => 'Update Database',
+    'title'            => 'Update database',
     'access arguments' => array('administer ip2country'),
     'page callback'    => '_ip2country_update',
     'type'             => MENU_CALLBACK,
     'file'             => 'ip2country.admin.inc',
   );
   $items['admin/config/location/ip2country/lookup'] = array(
-    'title'            => 'Lookup IP Address in Database',
+    'title'            => 'Lookup IP address in database',
     'access arguments' => array('administer ip2country'),
     'page callback'    => '_ip2country_lookup',
     'type'             => MENU_CALLBACK,

@@ -120,7 +120,7 @@ function ip2country_admin_settings() {
   // Container for database update preference forms
   $form['ip2country_database_update'] = array(
     '#type'         => 'fieldset',
-    '#title'        => t('Database Updates'),
+    '#title'        => t('Database updates'),
     '#collapsible'  => FALSE,
     '#collapsed'    => FALSE,
   );
@@ -172,7 +172,7 @@ function ip2country_admin_settings() {
   // Container for manual lookup
   $form['ip2country_manual_lookup'] = array(
     '#type'        => 'fieldset',
-    '#title'       => t('Manual Lookup'),
+    '#title'       => t('Manual lookup'),
     '#description' => t('Examine database values'),
     '#collapsible' => FALSE,
     '#collapsed'   => FALSE,
@@ -181,7 +181,7 @@ function ip2country_admin_settings() {
   // Form for IP address for manual lookup
   $form['ip2country_manual_lookup']['ip2country_lookup'] = array(
     '#type'        => 'textfield',
-    '#title'       => t('Manual Lookup'),
+    '#title'       => t('Manual lookup'),
     '#description' => t('Enter IP address'),
   );
 
@@ -197,7 +197,7 @@ function ip2country_admin_settings() {
   // Container for debugging preference forms
   $form['ip2country_debug_preferences'] = array(
     '#type'        => 'fieldset',
-    '#title'       => t('Debug Preferences'),
+    '#title'       => t('Debug preferences'),
     '#description' => t('Set debugging values'),
     '#collapsible' => FALSE,
     '#collapsed'   => FALSE,
@@ -206,7 +206,7 @@ function ip2country_admin_settings() {
   // Form to turn on debugging
   $form['ip2country_debug_preferences']['ip2country_debug'] = array(
     '#type'          => 'checkbox',
-    '#title'         => t('Admin Debug'),
+    '#title'         => t('Admin debug'),
     '#default_value' => variable_get('ip2country_debug', FALSE),
     '#description'   => t('Enables administrator to spoof an IP Address or Country for debugging purposes.'),
   );

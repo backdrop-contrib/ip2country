@@ -46,7 +46,7 @@ function ip2country_schema() {
         'not null'    => TRUE,
       ),
       'registry' => array(
-        'description' => 'Regional Internet Resgistry',
+        'description' => 'Regional Internet Registry',
         'type'        => 'char',
         'length'      => 10,
         'not null'    => TRUE,

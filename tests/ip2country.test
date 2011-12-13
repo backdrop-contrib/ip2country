@@ -227,7 +227,7 @@ class ip2countryTestCase extends DrupalWebTestCase {
     $this->assertText(t('Details'));
     $this->assertText('ip2country');
     $this->assertText(t('Database updated from @rir server.', array('@rir' => strtoupper($rir))));
-    
+
     $this->drupalLogout();
   }
 

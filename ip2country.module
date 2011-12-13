@@ -102,14 +102,14 @@ function ip2country_menu() {
     'file'             => 'ip2country.admin.inc',
   );
   $items['admin/config/people/ip2country/update'] = array(
-    'title'            => 'Update Database',
+    'title'            => 'Update database',
     'access arguments' => array('administer ip2country'),
     'page callback'    => '_ip2country_update',
     'type'             => MENU_CALLBACK,
     'file'             => 'ip2country.admin.inc',
   );
   $items['admin/config/people/ip2country/lookup'] = array(
-    'title'            => 'Lookup IP Address in Database',
+    'title'            => 'Lookup IP address in database',
     'access arguments' => array('administer ip2country'),
     'page callback'    => '_ip2country_lookup',
     'type'             => MENU_CALLBACK,
@@ -140,7 +140,7 @@ function ip2country_user_login(&$edit, &$account) {
       $country_code = variable_get('ip2country_test_country', 'US');
     }
     else {  // Debug IP entered
-      $ip = variable_get('ip2country_test_ip', $ip);
+      $ip = variable_get('ip2country_test_ip_address', $ip);
       $country_code = ip2country_get_country($ip);
     }
     drupal_set_message(t('Using DEBUG value for Country - @country', array('@country' => $country_code)));
