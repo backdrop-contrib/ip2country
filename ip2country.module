@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Determination of user's Country based on IP
+ * Determination of user's Country based on IP.
  *
  * This module uses the IP Address that a user is connected from to deduce
  * the Country where the user is located.  This method is not foolproof,
@@ -126,29 +126,29 @@ function ip2country_menu() {
  * Detects IP and determines country upon user login.
  */
 function ip2country_user_login(&$edit, &$account) {
-  // Successful login. First determine user's country based on IP
+  // Successful login. First determine user's country based on IP.
   $ip = ip_address();
   $country_code = ip2country_get_country($ip);
 
   // Now check to see if this user has "administer ip2country" permission
   // and if debug mode set.  If both are TRUE, use debug information
-  // instead of real information
+  // instead of real information.
   if (user_access('administer ip2country') &&
       variable_get('ip2country_debug', FALSE)) {
     $type = variable_get('ip2country_test_type', 0);
-    if ($type == 0) {  // Debug Country entered
+    if ($type == 0) {  // Debug Country entered.
       $country_code = variable_get('ip2country_test_country', 'US');
     }
-    else {  // Debug IP entered
+    else {  // Debug IP entered.
       $ip = variable_get('ip2country_test_ip_address', $ip);
       $country_code = ip2country_get_country($ip);
     }
     drupal_set_message(t('Using DEBUG value for Country - @country', array('@country' => $country_code)));
   }
 
-  // Finally, save country, if it has been determined
+  // Finally, save country, if it has been determined.
   if ($country_code) {
-    // Store the ISO country code in the $user object
+    // Store the ISO country code in the $user object.
     user_save($account, array('country_iso_code_2' => $country_code));
   }
 }
@@ -205,7 +205,7 @@ function ip2country_get_country($ip_address) {
     $ipl = $ip_address;
   }
 
-  // Locate IP within range
+  // Locate IP within range.
   $sql    = "SELECT country FROM {ip2country}
              WHERE (:start >= ip_range_first AND :end <= ip_range_last) LIMIT 1";
   $result = db_query($sql, array(':start' => $ipl, ':end' => $ipl))->fetchField();

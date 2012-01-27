@@ -23,11 +23,10 @@
  */
 function ip2country_update_database($registry='arin') {
   $registry = drupal_strtolower(trim($registry));
-  //
-  // FTP files
-  //
+
+  // FTP files.
   if ($registry == 'afrinic') {
-    // afrinic only holds its own data - every other nic has all the data
+    // afrinic only holds its own data - every other NIC has all the data.
     $ftp_urls = array(
       'ftp://ftp.ripe.net/pub/stats/afrinic/delegated-afrinic-latest',
     );
@@ -42,67 +41,51 @@ function ip2country_update_database($registry='arin') {
     );
   }
 
-  $entries   = 0;
-  //
-  // Set a run-time long enough so the script won't break
-  //
+  // Set a run-time long enough so the script won't break.
   drupal_set_time_limit(10*60);  // 10 minutes!
-  //
-  // Truncate the table to remove old data
-  //
+
+  // Truncate the table to remove old data.
   ip2country_empty_database();
-  //
-  // Download data files from the chosen registry
-  //
+
+  // Download data files from the chosen registry.
+  $entries   = 0;
   foreach ($ftp_urls as $ftp_file) {
-    //
-    // Replace Registry source with chosen registry
-    //
+    // Replace Registry source with chosen registry.
     $ftp_file = str_replace('ftp.ripe', 'ftp.' . $registry, $ftp_file);
-    //
-    // RipeNCC is named ripe-ncc on APNIC registry
-    //
+
+    // RipeNCC is named ripe-ncc on APNIC registry.
     if ($registry == 'apnic') {
       $ftp_file = str_replace('stats/ripencc/', 'stats/ripe-ncc/', $ftp_file);
     }
-    //
-    // Fetch the FTP file using cURL
-    //
+
+    // Fetch the FTP file using cURL.
     $txt = _ip2country_fetch_page($ftp_file);
-    //
-    // Break the FTP file into lines
-    //
+
+    // Break the FTP file into lines.
     $lines = explode("\n", $txt);
-    unset($txt);  // Free up memory
+    unset($txt);  // Free up memory.
     foreach ($lines as $line) {
-      //
-      // Trim each line for security
-      //
+      // Trim each line for security.
       $line = trim($line, "\r\t \n");
-      //
-      // Split each line
-      //
+
+      // Split each line.
       $parts = explode('|', $line);
       if (count($parts) != 7 || $parts[2] != 'ipv4') {
         continue;
       }
-      //
-      // The registry that owns the range
-      //
+
+      // The registry that owns the range.
       $owner_registry = $parts[0];
-      //
-      // The country code for the range
-      //
+
+      // The country code for the range.
       $country_code = $parts[1];
-      //
-      // Prepare the IP data for insert
-      //
+
+      // Prepare the IP data for insert.
       $ip_start     = (int) ip2long($parts[3]);
       $ip_end       = (int) ip2long($parts[3])+($parts[4]-1);
       $range_length = (int) $parts[4];
-      //
-      // Insert range into the DB
-      //
+
+      // Insert range into the DB.
       db_insert('ip2country')->fields(array(
                 'ip_range_first'  => min($ip_start, $ip_end),
                 'ip_range_last'   => max($ip_start, $ip_end),
@@ -114,9 +97,8 @@ function ip2country_update_database($registry='arin') {
       $entries++;
     }
   }
-  //
-  // Return record count in table
-  //
+
+  // Return record count in table.
   variable_set('ip2country_last_update', REQUEST_TIME);
   return $entries;
 }
