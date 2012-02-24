@@ -119,7 +119,6 @@ function _ip2country_fetch_page($url) {
   curl_setopt($curl, CURLOPT_HEADER, FALSE);
   curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
   curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
-  curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
 
   $html = curl_exec($curl);
   curl_close($curl);
