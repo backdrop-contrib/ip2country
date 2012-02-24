@@ -168,8 +168,10 @@ function ip2country_update_1() {
 
 
 /**
- * Drop ip_range_date column as it is never used and just
- * takes up database space and processing time.
+ * Drop ip_range_date column.
+ *
+ * ip_range_date it is never used and just takes up database space and
+ * processing time.
  */
 function ip2country_update_2() {
   $ret = array();
