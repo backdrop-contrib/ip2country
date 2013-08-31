@@ -3,10 +3,10 @@
  * jQuery code for ip2country module user interface.
  */
 (function ($) {  // Put definition of $ into local scope so jQuery code
-                 // doesn't conflict with other JavaScript libraries
+                 // doesn't conflict with other JavaScript libraries.
   Drupal.behaviors.ip2country = {
     attach: function() {
-      // Remove focus from the "Update" button
+      // Remove focus from the "Update" button.
       $('#ip2country-admin-settings .form-submit').eq(1).focus();
       var selectCountry = function() {
         $('#edit-ip2country-test-country').removeAttr('disabled');
@@ -16,7 +16,7 @@
         $('#edit-ip2country-test-country').attr('disabled', 'disabled');
         $('#edit-ip2country-test-ip-address').removeAttr('disabled');
       }
-      // Select the appropriate input based on radio button values
+      // Select the appropriate input based on radio button values.
       // First time in...
       var j = $(".form-radios").find("input:radio").eq(0).attr('checked');
       if (j) selectCountry(); else selectIP();
@@ -39,7 +39,7 @@
         return false;
       });
       // When "Lookup" button is pushed, make an AJAX call to initiate the
-      // database lookup
+      // database lookup.
       $('#edit-ip2country-lookup-button').click(function(){
         var lookupCompleted = function(data) {
           var result = $.parseJSON(data);
