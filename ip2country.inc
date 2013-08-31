@@ -7,6 +7,8 @@
  * Data is obtained from one of the five Regional Internet Registries
  * (AFRINIC, ARIN , APNIC, LACNIC, or RIPE).
  *
+ * Data format is described by ftp://ftp.arin.net/pub/stats/arin/README
+ *
  * This code derived from "class eIp2Country" posted at
  * http://www.tellinya.com/read/2007/06/03/ip2country-translate-ip-address-to-country-code/
  */
@@ -32,8 +34,9 @@ function ip2country_update_database($registry='arin') {
     );
   }
   else {
+    // Note arin doesn't play by the file-naming rules.
     $ftp_urls = array(
-      'ftp://ftp.ripe.net/pub/stats/arin/delegated-arin-latest',
+      'ftp://ftp.ripe.net/pub/stats/arin/delegated-arin-extended-latest',
       'ftp://ftp.ripe.net/pub/stats/apnic/delegated-apnic-latest',
       'ftp://ftp.ripe.net/pub/stats/lacnic/delegated-lacnic-latest',
       'ftp://ftp.ripe.net/pub/stats/afrinic/delegated-afrinic-latest',
@@ -48,7 +51,8 @@ function ip2country_update_database($registry='arin') {
   ip2country_empty_database();
 
   // Download data files from the chosen registry.
-  $entries   = 0;
+  $entries = 0;
+  $summary_records = 0;
   foreach ($ftp_urls as $ftp_file) {
     // Replace Registry source with chosen registry.
     $ftp_file = str_replace('ftp.ripe', 'ftp.' . $registry, $ftp_file);
@@ -61,16 +65,33 @@ function ip2country_update_database($registry='arin') {
     // Fetch the FTP file using cURL.
     $txt = _ip2country_fetch_page($ftp_file);
 
-    // Break the FTP file into lines.
+    // Break the FTP file into records.
     $lines = explode("\n", $txt);
     unset($txt);  // Free up memory.
+
+    // Loop over records.
+    $summary_not_found = TRUE;
     foreach ($lines as $line) {
       // Trim each line for security.
       $line = trim($line, "\r\t \n");
 
-      // Split each line.
+      // Skip comment lines and blank lines.
+      if (substr($line, 0, 1) == '#' || $line == '') {
+        continue;
+      }
+
+      // Split record into parts.
       $parts = explode('|', $line);
-      if (count($parts) != 7 || $parts[2] != 'ipv4') {
+
+      // We're only interested in the ipv4 records.
+      if ($parts[2] != 'ipv4') {
+        continue;
+      }
+
+      // Save number of ipv4 records from summary line.
+      if ($summary_not_found && $parts[5] == 'summary') {
+        $summary_not_found = FALSE;
+        $summary_records += $parts[4];
         continue;
       }
 
@@ -109,10 +130,15 @@ function ip2country_update_database($registry='arin') {
  *
  * @param $url
  *   The ftp URL where the file is located.
+ *
+ * @return
+ *   FALSE if ftp fetch failed. Otherwise, a string containing the contents
+ *   of the fetched file.
  */
 function _ip2country_fetch_page($url) {
   $curl = curl_init();
 
+  // Fetch requested file.
   curl_setopt($curl, CURLOPT_URL, $url);
   curl_setopt($curl, CURLOPT_TIMEOUT, 60*2);
   curl_setopt($curl, CURLOPT_USERAGENT, 'Drupal (+http://drupal.org/)');
