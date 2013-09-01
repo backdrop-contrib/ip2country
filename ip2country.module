@@ -75,10 +75,12 @@ function ip2country_permission() {
  * basis.  Default period is 1 week.
  */
 function ip2country_cron() {
-  if (variable_get('ip2country_last_update', 0) <=
-      REQUEST_TIME - variable_get('ip2country_update_interval', 604800)) {
-    ip2country_update_database(variable_get('ip2country_rir', 'arin'));
+  // Automatic database updates are disabled when $update_interval == 0.
+  $update_interval = variable_get('ip2country_update_interval', 604800);
+  if ($update_interval && variable_get('ip2country_last_update', 0) <=
+      REQUEST_TIME - $update_interval) {
     variable_set('ip2country_last_update', REQUEST_TIME);
+    ip2country_update_database(variable_get('ip2country_rir', 'arin'));
     if (variable_get('ip2country_watchdog', 1)) {
       watchdog('ip2country', 'Database updated from @registry server.', array('@registry' => drupal_strtoupper(variable_get('ip2country_rir', 'arin'))), WATCHDOG_NOTICE);
     }

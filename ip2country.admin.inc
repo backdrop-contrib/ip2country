@@ -142,6 +142,7 @@ function ip2country_admin_settings() {
   );
 
   $period = drupal_map_assoc(array(86400, 302400, 604800, 1209600, 2419200), 'format_interval');
+  $period[0] = t('Never');
 
   // Form to set automatic update interval.
   $form['ip2country_database_update']['ip2country_update_interval'] = array(
