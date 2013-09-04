@@ -8,6 +8,10 @@
  */
 
 
+/** Utility functions for loading IP/Country DB from external sources */
+module_load_include('inc', 'ip2country');
+
+
 /**
  * Need 1 class for unit tests, 1 class for functional tests
  * 1 function for DB tests because filling takes so long
