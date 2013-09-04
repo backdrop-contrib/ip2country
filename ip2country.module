@@ -28,10 +28,6 @@
  */
 
 
-/** Utility functions for loading IP/Country DB from external sources */
-module_load_include('inc', 'ip2country', 'ip2country');
-
-
 /******************************************************************************
  * Drupal Hooks                                                               *
  ******************************************************************************/
@@ -75,14 +71,22 @@ function ip2country_permission() {
  * basis.  Default period is 1 week.
  */
 function ip2country_cron() {
+  // Utility functions for fetching and loading IP/Country DB from RIR.
+  module_load_include('inc', 'ip2country');
+
   // Automatic database updates are disabled when $update_interval == 0.
   $update_interval = variable_get('ip2country_update_interval', 604800);
   if ($update_interval && variable_get('ip2country_last_update', 0) <=
       REQUEST_TIME - $update_interval) {
-    variable_set('ip2country_last_update', REQUEST_TIME);
-    ip2country_update_database(variable_get('ip2country_rir', 'arin'));
+    $status = ip2country_update_database(variable_get('ip2country_rir', 'arin'));
+    // Log to watchdog if requested.
     if (variable_get('ip2country_watchdog', 1)) {
-      watchdog('ip2country', 'Database updated from @registry server.', array('@registry' => drupal_strtoupper(variable_get('ip2country_rir', 'arin'))), WATCHDOG_NOTICE);
+      if ($status != FALSE) {  // Success.
+        watchdog('ip2country', 'Database updated from @registry server. Table contains @rows rows.', array('@registry' => drupal_strtoupper(variable_get('ip2country_rir', 'arin')), '@rows' => $status), WATCHDOG_NOTICE);
+      }
+      else {  // Failure.
+        watchdog('ip2country', 'Database update from @registry server FAILED.', array('@registry' => drupal_strtoupper(variable_get('ip2country_rir', 'arin'))), WATCHDOG_NOTICE);
+      }
     }
   }
 }

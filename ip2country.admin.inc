@@ -31,6 +31,10 @@
 /** Drupal core function country_get_list() which returns a list of countries */
 include_once DRUPAL_ROOT . '/includes/locale.inc';
 
+/** Utility functions for loading IP/Country DB from external sources */
+module_load_include('inc', 'ip2country');
+
+
 /******************************************************************************
  * Ajax Callbacks                                                             *
  ******************************************************************************/
