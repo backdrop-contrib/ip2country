@@ -94,6 +94,7 @@ function ip2country_install() {
   // leave the database table empty on install.
   //
   if (variable_get('ip2country_populate_database_on_install', TRUE)) {
+    module_load_include('inc', 'ip2country');
     ip2country_update_database();
   }
 }
