@@ -5,14 +5,14 @@
  * Determination of user's Country based on IP address.
  *
  * This module uses the IP Address that a user is connected from to deduce
- * the Country where the user is located.  This method is not foolproof,
+ * the Country where the user is located. This method is not foolproof,
  * because a user may connect through an anonymizing proxy, or may be in
  * an unusual case, such as getting service from a neighboring country,
  * or using an IP block leased from a company in another country.
  * Additionally, users accessing a server on a local network may be using
  * an IP that is not assigned to any country (e.g. 192.168.x.x).
  *
- * Country determination occurs upon user login.  If a country can be
+ * Country determination occurs upon user login. If a country can be
  * determined from the IP address, the ISO 3166 2-character country code
  * is stored in the Drupal $user object as $user->country_iso_code_2.
  * If no country can be determined, this member is left unset.
@@ -20,7 +20,7 @@
  * The database used is maintained by ARIN, the American Registry for
  * Internet Numbers (http://www.arin.net/about_us/index.html), which is
  * one of the 5 official Regional Internet Registries (RIR) responsible
- * for assigning IP addresses.  The claim is the database is 98% accurate,
+ * for assigning IP addresses. The claim is the database is 98% accurate,
  * with most of the problems coming from users in less-developed countries.
  * Regardless, there's no more-authoritative source of this information.
  *
@@ -43,7 +43,8 @@ module_load_include('inc', 'ip2country');
  * AJAX callback to update the IP to Country database.
  *
  * @param $rir
- *   String with name of IP registry.  One of afrinic, arin, lacnic, ripe.
+ *   String with name of IP registry. One of 'afrinic', 'arin', 'lacnic',
+ *   'ripe'. Not case sensitive.
  *
  * @return
  *   JSON object for display by jQuery script.
@@ -154,15 +155,15 @@ function ip2country_admin_settings() {
     '#title'         => t('Database update frequency'),
     '#default_value' => variable_get('ip2country_update_interval', 604800),
     '#options'       => $period,
-    '#description'   => t('Database will be automatically updated via cron.php.  Cron must be enabled for this to work.  Default period is 1 week (604800 seconds).'),
+    '#description'   => t('Database will be automatically updated via cron.php. Cron must be enabled for this to work. Default period is 1 week (604800 seconds).'),
   );
 
   $update_time = variable_get('ip2country_last_update', 0);
   if (!empty($update_time)) {
-    $message = t('Database last updated on @date at @time', array('@date' => format_date($update_time, 'custom', 'n/j/Y'), '@time' => format_date($update_time, 'custom', 'H:i:s T')));
+    $message = t('Database last updated on @date at @time from @registry server.', array('@date' => format_date($update_time, 'custom', 'n/j/Y'), '@time' => format_date($update_time, 'custom', 'H:i:s T'), '@registry' => variable_get('ip2country_last_update_rir', 'unknown')));
   }
   else {
-    $message = t('Database is empty.  You may fill the database by pressing the @update button.', array('@update' => t('Update')));
+    $message = t('Database is empty. You may fill the database by pressing the @update button.', array('@update' => t('Update')));
   }
 
   // Form to initiate manual updating of the IP-Country database.
@@ -170,7 +171,7 @@ function ip2country_admin_settings() {
     '#type'        => 'button',
     '#value'       => t('Update'),
     '#executes_submit_callback' => FALSE,
-    '#prefix'      => '<div>' . t('The IP to Country Database may be updated manually by pressing the Update button below.  Note, this may take several minutes.') . '</div>',
+    '#prefix'      => '<p>' . t('The IP to Country Database may be updated manually by pressing the "Update" button below. Note, this may take several minutes. Changes to the above settings will not be permanently saved unless you press the "Save configuration" button at the bottom of this page.') . '</p>',
     '#suffix'      => '<span id="dbthrobber" class="message">' . $message . '</span>',
   );
 

@@ -5,14 +5,14 @@
  * Determination of user's Country based on IP.
  *
  * This module uses the IP Address that a user is connected from to deduce
- * the Country where the user is located.  This method is not foolproof,
+ * the Country where the user is located. This method is not foolproof,
  * because a user may connect through an anonymizing proxy, or may be in
  * an unusual case, such as getting service from a neighboring country,
  * or using an IP block leased from a company in another country.
  * Additionally, users accessing a server on a local network may be using
  * an IP that is not assigned to any country (e.g. 192.168.x.x).
  *
- * Country determination occurs upon user login.  If a country can be
+ * Country determination occurs upon user login. If a country can be
  * determined from the IP address, the ISO 3166 2-character country code
  * is stored in the Drupal $user object as $user->country_iso_code_2.
  * If no country can be determined, this member is left unset.
@@ -20,7 +20,7 @@
  * The database used is maintained by ARIN, the American Registry for
  * Internet Numbers (http://www.arin.net/about_us/index.html), which is
  * one of the 5 official Regional Internet Registries (RIR) responsible
- * for assigning IP addresses.  The claim is the database is 98% accurate,
+ * for assigning IP addresses. The claim is the database is 98% accurate,
  * with most of the problems coming from users in less-developed countries.
  * Regardless, there's no more-authoritative source of this information.
  *
@@ -68,7 +68,7 @@ function ip2country_permission() {
  * Implements hook_cron().
  *
  * Updates the IP to Country database automatically on a periodic
- * basis.  Default period is 1 week.
+ * basis. Default period is 1 week.
  */
 function ip2country_cron() {
   // Utility functions for fetching and loading IP/Country DB from RIR.
@@ -80,12 +80,12 @@ function ip2country_cron() {
       REQUEST_TIME - $update_interval) {
     $status = ip2country_update_database(variable_get('ip2country_rir', 'arin'));
     // Log to watchdog if requested.
-    if (variable_get('ip2country_watchdog', 1)) {
+    if (variable_get('ip2country_watchdog', TRUE)) {
       if ($status != FALSE) {  // Success.
         watchdog('ip2country', 'Database updated from @registry server. Table contains @rows rows.', array('@registry' => drupal_strtoupper(variable_get('ip2country_rir', 'arin')), '@rows' => $status), WATCHDOG_NOTICE);
       }
       else {  // Failure.
-        watchdog('ip2country', 'Database update from @registry server FAILED.', array('@registry' => drupal_strtoupper(variable_get('ip2country_rir', 'arin'))), WATCHDOG_NOTICE);
+        watchdog('ip2country', 'Database update from @registry server FAILED.', array('@registry' => drupal_strtoupper(variable_get('ip2country_rir', 'arin'))), WATCHDOG_WARNING);
       }
     }
   }
@@ -137,7 +137,7 @@ function ip2country_user_login(&$edit, &$account) {
   $country_code = ip2country_get_country($ip);
 
   // Now check to see if this user has "administer ip2country" permission
-  // and if debug mode set.  If both are TRUE, use debug information
+  // and if debug mode set. If both are TRUE, use debug information
   // instead of real information.
   if (user_access('administer ip2country') &&
       variable_get('ip2country_debug', FALSE)) {
@@ -239,7 +239,7 @@ function ip2country_get_count() {
  * Implements hook_form_[form_id]_alter().
  *
  * Alters Ubercart's uc_cart_checkout_form() to use ip2country's country
- * determination as the default billing and delivery country.  If the user's
+ * determination as the default billing and delivery country. If the user's
  * country hasn't been determined, the store country will be used instead.
  */
 function ip2country_form_uc_cart_checkout_form_alter(&$form, &$form_state) {
@@ -263,7 +263,7 @@ function ip2country_form_uc_cart_checkout_form_alter(&$form, &$form_state) {
  * Implements hook_form_[form_id]_alter().
  *
  * Alters Ubercart's uc_cart_pane_quotes() form to use ip2country's country
- * determination as the default billing and delivery country.  If the user's
+ * determination as the default billing and delivery country. If the user's
  * country hasn't been determined, the store country will be used instead.
  */
 function ip2country_form_uc_cart_pane_quotes_alter(&$form, &$form_state) {

@@ -5,7 +5,7 @@
  * Determination of user's Country based on IP
  *
  * This module uses the IP Address that a user is connected from to deduce
- * the Country where the user is located.  This method is not foolproof,
+ * the Country where the user is located. This method is not foolproof,
  * because a user may connect through an anonymizing proxy, or may be in
  * an unusual case, such as getting service from a neighboring country,
  * or using an IP block leased from a company in another country.
