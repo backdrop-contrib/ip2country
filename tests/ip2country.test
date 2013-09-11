@@ -225,13 +225,13 @@ class ip2countryTestCase extends DrupalWebTestCase {
     $this->drupalGet('admin/reports/dblog');
     $this->assertText(t('Recent log messages'));
     $this->assertText('ip2country');
-    $this->assertLink(t('Database updated from @rir server.', array('@rir' => strtoupper($rir))));
+    $this->assertLink(t('Manual database update from @rir server.', array('@rir' => strtoupper($rir))));
 
     // Drill down
-    $this->clickLink(t('Database updated from @rir server.', array('@rir' => strtoupper($rir))));
+    $this->clickLink(t('Manual database update from @rir server.', array('@rir' => strtoupper($rir))));
     $this->assertText(t('Details'));
     $this->assertText('ip2country');
-    $this->assertText(t('Database updated from @rir server.', array('@rir' => strtoupper($rir))));
+    $this->assertText(t('Manual database update from @rir server.', array('@rir' => strtoupper($rir))));
 
     $this->drupalLogout();
   }

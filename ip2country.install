@@ -160,9 +160,11 @@ function ip2country_update_1() {
   variable_del('uc_ip2country_test_country');
   variable_del('uc_ip2country_rir');
   variable_del('uc_ip2country_last_update');
+  variable_del('uc_ip2country_last_update_rir');
   variable_del('uc_ip2country_update_interval');
   variable_del('uc_ip2country_update_database');
   variable_del('uc_ip2country_watchdog');
+  variable_del('uc_ip2country_md5_checksum');
 
   return $ret;
 }

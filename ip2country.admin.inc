@@ -52,18 +52,31 @@ module_load_include('inc', 'ip2country');
 function _ip2country_update($rir) {
 
   // Update DB from RIR.
-  ip2country_update_database($rir);
+  $status = ip2country_update_database($rir);
 
-  if (variable_get('ip2country_watchdog', 1)) {
-    watchdog('ip2country', 'Database updated from @registry server.', array('@registry' => drupal_strtoupper($rir)), WATCHDOG_NOTICE);
+  if ($status != FALSE) {
+    if (variable_get('ip2country_watchdog', TRUE)) {
+      watchdog('ip2country', 'Manual database update from @registry server.', array('@registry' => drupal_strtoupper($rir)), WATCHDOG_NOTICE);
+    }
+    print drupal_json_encode(array(
+      'count'   => t('@rows rows affected.',
+                      array('@rows' => ip2country_get_count())),
+      'server'  => $rir,
+      'message' => t('The IP to Country database has been updated from @server.',
+                     array('@server' => drupal_strtoupper($rir))),
+    ));
   }
-  print drupal_json_encode(array(
-    'count'   => t('@rows rows affected.',
-                    array('@rows' => ip2country_get_count())),
-    'server'  => $rir,
-    'message' => t('The IP to Country database has been updated from @server.',
-                   array('@server' => drupal_strtoupper($rir))),
-  ));
+  else {
+    if (variable_get('ip2country_watchdog', TRUE)) {
+      watchdog('ip2country', 'Manual database update from @registry server FAILED.', array('@registry' => drupal_strtoupper($rir)), WATCHDOG_NOTICE);
+    }
+    print drupal_json_encode(array(
+      'count'   => t('@rows rows affected.', array('@rows' => 0)),
+      'server'  => $rir,
+      'message' => t('The IP to Country database update failed.'),
+    ));
+  }
+
   exit();
 }
 
@@ -134,17 +147,26 @@ function ip2country_admin_settings() {
   $form['ip2country_database_update']['ip2country_watchdog'] = array(
     '#type'          => 'checkbox',
     '#title'         => t('Log database updates to watchdog'),
-    '#default_value' => variable_get('ip2country_watchdog', 1),
+    '#default_value' => variable_get('ip2country_watchdog', TRUE),
   );
 
   // Form to choose RIR.
   $form['ip2country_database_update']['ip2country_rir'] = array(
     '#type'          => 'select',
-    '#title'         => t('Regional Internet Registry to use'),
+    '#title'         => t('Regional Internet Registry'),
     '#options'       => array('afrinic' => 'AFRINIC', 'apnic' => 'APNIC', 'arin' => 'ARIN', 'lacnic' => 'LACNIC', 'ripe' => 'RIPE'),
     '#default_value' => variable_get('ip2country_rir', 'arin'),
-    '#description'   => t('You may find that the regional server nearest you has the best response time, but note that AFRINIC provides only its own subset of registration data.'),
+    '#description'   => t('Database will be downloaded from the selected RIR. You may find that the regional server nearest you has the best response time, but note that AFRINIC provides only its own subset of registration data.'),
   );
+
+  // Form to enable MD5 checksum of downloaded databases.
+  $form['ip2country_database_update']['ip2country_md5_checksum'] = array(
+    '#type'          => 'checkbox',
+    '#title'         => t('Perform MD5 checksum comparison'),
+    '#description'   => t("Compare MD5 checksum downloaded from the RIR with MD5 checksum calculated locally to ensure the data has not been corrupted. RIRs don't always store current checksums, so if this option is checked your database updates may sometimes fail."),
+    '#default_value' => variable_get('ip2country_md5_checksum', FALSE),
+  );
+
 
   $period = drupal_map_assoc(array(86400, 302400, 604800, 1209600, 2419200), 'format_interval');
   $period[0] = t('Never');
