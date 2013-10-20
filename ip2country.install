@@ -116,12 +116,17 @@ function ip2country_uninstall() {
   variable_del('ip2country_test_ip_address');
   variable_del('ip2country_test_country');
   variable_del('ip2country_rir');
+  variable_del('ip2country_md5_checksum');
   variable_del('ip2country_last_update');
+  variable_del('ip2country_last_update_rir');
+  variable_del('ip2country_update_interval');
+  variable_del('ip2country_watchdog');
+
+  // Obsolete variables - we no longer store these, but a prior version
+  // did. Try to remove just in case they're still hanging around.
   variable_del('ip2country_lookup');
   variable_del('ip2country_lookup_button');
-  variable_del('ip2country_update_interval');
   variable_del('ip2country_update_database');
-  variable_del('ip2country_watchdog');
 
   // Date/time format settings.
   variable_del('date_format_ip2country_date');
@@ -165,11 +170,9 @@ function ip2country_update_1() {
   variable_del('uc_ip2country_test_country');
   variable_del('uc_ip2country_rir');
   variable_del('uc_ip2country_last_update');
-  variable_del('uc_ip2country_last_update_rir');
   variable_del('uc_ip2country_update_interval');
   variable_del('uc_ip2country_update_database');
   variable_del('uc_ip2country_watchdog');
-  variable_del('uc_ip2country_md5_checksum');
 
   return $ret;
 }
