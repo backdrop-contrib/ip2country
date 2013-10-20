@@ -182,7 +182,14 @@ function ip2country_admin_settings() {
 
   $update_time = variable_get('ip2country_last_update', 0);
   if (!empty($update_time)) {
-    $message = t('Database last updated on @date at @time from @registry server.', array('@date' => format_date($update_time, 'custom', 'n/j/Y'), '@time' => format_date($update_time, 'custom', 'H:i:s T'), '@registry' => variable_get('ip2country_last_update_rir', 'unknown')));
+    $message = t(
+      'Database last updated on @date at @time from @registry server.',
+      array(
+        '@date' => format_date($update_time, 'custom', variable_get('date_format_ip2country_date', 'n/j/Y')),
+        '@time' => format_date($update_time, 'custom', variable_get('date_format_ip2country_time', 'H:i:s T')),
+        '@registry' => variable_get('ip2country_last_update_rir', 'unknown')
+      )
+    );
   }
   else {
     $message = t('Database is empty. You may fill the database by pressing the @update button.', array('@update' => t('Update')));

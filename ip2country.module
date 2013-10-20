@@ -125,6 +125,26 @@ function ip2country_menu() {
   return $items;
 }
 
+/**
+ * Implements hook_date_formats().
+ */
+function ip2country_date_formats() {
+  // Implementation is kept separate because it only needs to be loaded
+  // when module is enabled.
+  module_load_include('inc', 'ip2country', 'ip2country.formats');
+
+  return ip2country_get_date_formats();
+}
+
+/**
+ * Implements hook_date_format_types().
+ */
+function ip2country_date_format_types() {
+  return array(
+    'ip2country_date' => t('Date only (ip2country)'),
+    'ip2country_time' => t('Time only (ip2country)'),
+  );
+}
 
 /**
  * Implements hook_user_login().
@@ -245,7 +265,6 @@ function ip2country_get_count() {
 function ip2country_form_uc_cart_checkout_form_alter(&$form, &$form_state) {
   global $user;
 
-  //dpm($user);
   if (isset($user->data['country_iso_code_2'])) {
     if (module_exists('uc_store')) {
       $country_id = db_query('SELECT country_id from {uc_countries} WHERE country_iso_code_2 = :iso2', array(':iso2' => $user->data['country_iso_code_2']))->fetchField();

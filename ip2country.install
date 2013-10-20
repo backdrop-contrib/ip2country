@@ -97,18 +97,19 @@ function ip2country_install() {
     module_load_include('inc', 'ip2country');
     ip2country_update_database();
   }
+
+  // Set the default date format for reporting database update date/time.
+  variable_set('date_format_ip2country_date', 'n/j/Y');
+  variable_set('date_format_ip2country_time', 'H:i:s T');
 }
 
 
 /**
  * Implements hook_uninstall().
- *
- * Removes all tables and variables inserted into the
- * database by this module.
  */
 function ip2country_uninstall() {
 
-  // Remove all module variables from the database
+  // Remove all module variables from the database.
   variable_del('ip2country_populate_database_on_install');
   variable_del('ip2country_debug');
   variable_del('ip2country_test_type');
@@ -121,11 +122,15 @@ function ip2country_uninstall() {
   variable_del('ip2country_update_interval');
   variable_del('ip2country_update_database');
   variable_del('ip2country_watchdog');
+
+  // Date/time format settings.
+  variable_del('date_format_ip2country_date');
+  variable_del('date_format_ip2country_time');
 }
 
 
 /**
- * Rename tables and variables, clean up database.
+ * Renames tables and variables, cleans up database.
  */
 function ip2country_update_1() {
   $ret = array();
@@ -171,7 +176,7 @@ function ip2country_update_1() {
 
 
 /**
- * Drop ip_range_date column.
+ * Drops ip_range_date column.
  *
  * ip_range_date it is never used and just takes up database space and
  * processing time.
@@ -183,4 +188,14 @@ function ip2country_update_2() {
   db_drop_field($ret, 'ip2country', 'ip_range_date');
 
   return $ret;
+}
+
+
+/**
+ * Provides configurable date/time formats for admin page.
+ */
+function ip2country_update_7100() {
+  // Set the default date format for reporting database update date/time.
+  variable_set('date_format_ip2country_date', 'n/j/Y');
+  variable_set('date_format_ip2country_time', 'H:i:s T');
 }
