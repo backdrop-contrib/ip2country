@@ -159,29 +159,26 @@ class ip2countryTestCase extends DrupalWebTestCase {
     // Test as anonymous user
     //
     $this->drupalGet('admin/config');
+    $this->assertResponse(403);
     $this->assertText(t('Access denied'));
     $this->assertText(t('You are not authorized to access this page.'));
 
     $this->drupalGet('admin/config/people/ip2country');
-    $this->assertText(t('Access denied'));
-    $this->assertText(t('You are not authorized to access this page.'));
+    $this->assertResponse(403);
 
     // Try to trigger DB update as anonymous
     $this->drupalGet('admin/config/people/ip2country/update/arin');
-    $this->assertText(t('Access denied'));
-    $this->assertText(t('You are not authorized to access this page.'));
+    $this->assertResponse(403);
 
     //
     // Test as authenticated but unprivileged user
     //
     $this->drupalLogin($this->unpriv_user);
     $this->drupalGet('admin/config');
-    $this->assertText(t('Access denied'));
-    $this->assertText(t('You are not authorized to access this page.'));
+    $this->assertResponse(403);
 
     $this->drupalGet('admin/config/people/ip2country');
-    $this->assertText(t('Access denied'));
-    $this->assertText(t('You are not authorized to access this page.'));
+    $this->assertResponse(403);
     $this->drupalLogout();
 
     //
@@ -189,10 +186,12 @@ class ip2countryTestCase extends DrupalWebTestCase {
     //
     $this->drupalLogin($this->admin_user);
     $this->drupalGet('admin/config');
+    $this->assertResponse(200);
     $this->assertText(t('User location'));
     $this->assertText(t('Settings for determining user location from IP address.'));
 
     $this->drupalGet('admin/config/people/ip2country');
+    $this->assertResponse(200);
     $this->assertText(t('User location'));
     $this->assertText(t('Configuration settings for the ip2country module.'));
     $this->assertText(t('Database is empty.'));
