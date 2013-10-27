@@ -187,7 +187,7 @@ function ip2country_admin_settings() {
       array(
         '@date' => format_date($update_time, 'custom', variable_get('date_format_ip2country_date', 'n/j/Y')),
         '@time' => format_date($update_time, 'custom', variable_get('date_format_ip2country_time', 'H:i:s T')),
-        '@registry' => variable_get('ip2country_last_update_rir', 'unknown')
+        '@registry' => drupal_strtoupper(variable_get('ip2country_last_update_rir', 'unknown'))
       )
     );
   }

@@ -185,7 +185,7 @@ function ip2country_update_database($registry = 'arin') {
 
     // Record the time of update.
     variable_set('ip2country_last_update', REQUEST_TIME);
-    variable_set('ip2country_last_update_rir', drupal_strtoupper($registry));
+    variable_set('ip2country_last_update_rir', $registry);
 
     // Return count of records in the table.
     return $entries;
