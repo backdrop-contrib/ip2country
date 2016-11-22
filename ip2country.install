@@ -89,116 +89,46 @@ function ip2country_schema() {
  * database automatically on install, intended for use by SimpleTest.
  */
 function ip2country_install() {
-  //
+  $config = config('ip2country.settings');
   // Set the variable to FALSE before installing this module to
   // leave the database table empty on install.
-  //
-  if (variable_get('ip2country_populate_database_on_install', TRUE)) {
+  if ($config->get('populate_database_on_install')) {
     module_load_include('inc', 'ip2country');
     ip2country_update_database();
   }
-
-  // Set the default date format for reporting database update date/time.
-  variable_set('date_format_ip2country_date', 'n/j/Y');
-  variable_set('date_format_ip2country_time', 'H:i:s T');
+  // Set test IP address to current IP.
+  $config->set('ip2country.settings', 'test_ip_address', ip_address());
+  $config->save();
 }
 
-
 /**
- * Implements hook_uninstall().
+ * Rename tables and variables, clean up database.
  */
-function ip2country_uninstall() {
+function ip2country_update_1000() {
+  $config = config('ip2country.settings');
 
-  // Remove all module variables from the database.
-  variable_del('ip2country_populate_database_on_install');
+  // Rename variables while  preserving setting values
+  $config->set('debug', variable_get('ip2country_debug', FALSE));
+  $config->set('test_type', variable_get('ip2country_test_type', 0));
+  $config->set('test_ip_address', variable_get('ip2country_test_ip_address', ''));
+  $config->set('test_country', variable_get('ip2country_test_country', ''));
+  $config->set('rir', variable_get('ip2country_rir', 'arin'));
+  $config->set('last_update', variable_get('ip2country_last_update', 0));
+  $config->set('update_interval', variable_get('ip2country_update_interval', 604800));
+  $config->set('update_database', variable_get('ip2country_update_database', ''));
+  $config->set('watchdog', variable_get('ip2country_watchdog', 1));
+  $config->save();
+
+  // Remove all old variables from the database
   variable_del('ip2country_debug');
   variable_del('ip2country_test_type');
   variable_del('ip2country_test_ip_address');
   variable_del('ip2country_test_country');
   variable_del('ip2country_rir');
-  variable_del('ip2country_md5_checksum');
   variable_del('ip2country_last_update');
   variable_del('ip2country_last_update_rir');
   variable_del('ip2country_update_interval');
-  variable_del('ip2country_watchdog');
-
-  // Obsolete variables - we no longer store these, but a prior version
-  // did. Try to remove just in case they're still hanging around.
-  variable_del('ip2country_lookup');
-  variable_del('ip2country_lookup_button');
   variable_del('ip2country_update_database');
-
-  // Date/time format settings.
-  variable_del('date_format_ip2country_date');
-  variable_del('date_format_ip2country_time');
-}
-
-
-/**
- * Renames tables and variables, cleans up database.
- */
-function ip2country_update_1() {
-  $ret = array();
-
-  // Remove all database tables created by this module
-  $ret[] = update_sql("ALTER TABLE {uc_ip2country} RENAME TO {ip2country}");
-
-  // Rename variables while  preserving setting values
-  variable_set('ip2country_debug',
-               variable_get('uc_ip2country_debug', FALSE));
-  variable_set('ip2country_test_type',
-               variable_get('uc_ip2country_test_type', 0));
-  variable_set('ip2country_test_ip_address',
-               variable_get('uc_ip2country_test_ip_address', ''));
-  variable_set('ip2country_test_country',
-               variable_get('uc_ip2country_test_country', ''));
-  variable_set('ip2country_rir',
-               variable_get('uc_ip2country_rir', 'arin'));
-  variable_set('ip2country_last_update',
-               variable_get('uc_ip2country_last_update', 0));
-  variable_set('ip2country_update_interval',
-               variable_get('uc_ip2country_update_interval', 604800));
-  variable_set('ip2country_update_database',
-               variable_get('uc_ip2country_update_database', ''));
-  variable_set('ip2country_watchdog',
-               variable_get('uc_ip2country_watchdog', 1));
-
-  // Remove all old variables from the database
-  variable_del('uc_ip2country_debug');
-  variable_del('uc_ip2country_test_type');
-  variable_del('uc_ip2country_test_ip_address');
-  variable_del('uc_ip2country_test_country');
-  variable_del('uc_ip2country_rir');
-  variable_del('uc_ip2country_last_update');
-  variable_del('uc_ip2country_update_interval');
-  variable_del('uc_ip2country_update_database');
-  variable_del('uc_ip2country_watchdog');
-
-  return $ret;
-}
-
-
-/**
- * Drops ip_range_date column.
- *
- * ip_range_date it is never used and just takes up database space and
- * processing time.
- */
-function ip2country_update_2() {
-  $ret = array();
-
-  // Drop ip_range_date
-  db_drop_field($ret, 'ip2country', 'ip_range_date');
-
-  return $ret;
-}
-
-
-/**
- * Provides configurable date/time formats for admin page.
- */
-function ip2country_update_7100() {
-  // Set the default date format for reporting database update date/time.
-  variable_set('date_format_ip2country_date', 'n/j/Y');
-  variable_set('date_format_ip2country_time', 'H:i:s T');
+  variable_del('ip2country_watchdog');
+  variable_del('ip2country_md5_checksum');
 }

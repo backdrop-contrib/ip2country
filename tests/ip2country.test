@@ -4,7 +4,7 @@
  * @file
  * Tests suite for the ip2country module.
  *
- * @author Tim Rohaly.    <http://drupal.org/user/202830>
+ * @author Tim Rohaly.    <http://backdrop.org/user/202830>
  */
 
 
@@ -16,7 +16,7 @@ module_load_include('inc', 'ip2country');
  * Need 1 class for unit tests, 1 class for functional tests
  * 1 function for DB tests because filling takes so long
  */
-class ip2countryTestCase extends DrupalWebTestCase {
+class ip2countryTestCase extends BackdropWebTestCase {
 
   /** Admin user */
   protected $admin_user;
@@ -26,7 +26,7 @@ class ip2countryTestCase extends DrupalWebTestCase {
 
 
   /**
-   * Implements DrupalWebTestCase::getInfo().
+   * Implements BackdropWebTestCase::getInfo().
    */
   public static function getInfo() {
     return array(
@@ -38,7 +38,7 @@ class ip2countryTestCase extends DrupalWebTestCase {
 
 
   /**
-   * Overrides DrupalWebTestCase::setUp().
+   * Overrides BackdropWebTestCase::setUp().
    */
   function setUp() {
     //
@@ -52,10 +52,10 @@ class ip2countryTestCase extends DrupalWebTestCase {
     // Set a run-time long enough so the script won't break
     //
     $this->timeLimit = 3 * 60;  // 3 minutes!
-    drupal_set_time_limit($this->timeLimit);
+    backdrop_set_time_limit($this->timeLimit);
 
     // Turn off automatic DB download when module is installed.
-    variable_set('ip2country_populate_database_on_install', FALSE);
+    config_set('ip2country.settings', 'ip2country_populate_database_on_install', FALSE);
 
     // Explicitly enable the module so that it will have access
     // to the variable we set above.
@@ -72,13 +72,13 @@ class ip2countryTestCase extends DrupalWebTestCase {
     );
 
     // Create our test users.
-    $this->admin_user = $this->drupalCreateUser(array(
+    $this->admin_user = $this->backdropCreateUser(array(
       'administer site configuration',
       'access administration pages',
       'access site reports',
       'administer ip2country',
     ));
-    $this->unpriv_user = $this->drupalCreateUser();
+    $this->unpriv_user = $this->backdropCreateUser();
   }
 
 
@@ -158,40 +158,41 @@ class ip2countryTestCase extends DrupalWebTestCase {
     //
     // Test as anonymous user
     //
-    $this->drupalGet('admin/config');
-    $this->assertResponse(403);
+    $this->backdropGet('admin/config');
     $this->assertText(t('Access denied'));
     $this->assertText(t('You are not authorized to access this page.'));
 
-    $this->drupalGet('admin/config/people/ip2country');
-    $this->assertResponse(403);
+    $this->backdropGet('admin/config/people/ip2country');
+    $this->assertText(t('Access denied'));
+    $this->assertText(t('You are not authorized to access this page.'));
 
     // Try to trigger DB update as anonymous
-    $this->drupalGet('admin/config/people/ip2country/update/arin');
-    $this->assertResponse(403);
+    $this->backdropGet('admin/config/people/ip2country/update/arin');
+    $this->assertText(t('Access denied'));
+    $this->assertText(t('You are not authorized to access this page.'));
 
     //
     // Test as authenticated but unprivileged user
     //
-    $this->drupalLogin($this->unpriv_user);
-    $this->drupalGet('admin/config');
-    $this->assertResponse(403);
+    $this->backdropLogin($this->unpriv_user);
+    $this->backdropGet('admin/config');
+    $this->assertText(t('Access denied'));
+    $this->assertText(t('You are not authorized to access this page.'));
 
-    $this->drupalGet('admin/config/people/ip2country');
-    $this->assertResponse(403);
-    $this->drupalLogout();
+    $this->backdropGet('admin/config/people/ip2country');
+    $this->assertText(t('Access denied'));
+    $this->assertText(t('You are not authorized to access this page.'));
+    $this->backdropLogout();
 
     //
     // As admin user
     //
-    $this->drupalLogin($this->admin_user);
-    $this->drupalGet('admin/config');
-    $this->assertResponse(200);
+    $this->backdropLogin($this->admin_user);
+    $this->backdropGet('admin/config');
     $this->assertText(t('User location'));
     $this->assertText(t('Settings for determining user location from IP address.'));
 
-    $this->drupalGet('admin/config/people/ip2country');
-    $this->assertResponse(200);
+    $this->backdropGet('admin/config/people/ip2country');
     $this->assertText(t('User location'));
     $this->assertText(t('Configuration settings for the ip2country module.'));
     $this->assertText(t('Database is empty.'));
@@ -215,13 +216,13 @@ class ip2countryTestCase extends DrupalWebTestCase {
       'lacnic'  => 'LACNIC',
       'ripe'    => 'RIPE'
     ));
-    $this->drupalGet('admin/config/people/ip2country/update/' . $rir);
+    $this->backdropGet('admin/config/people/ip2country/update/' . $rir);
     $this->assertText(
       t('The IP to Country database has been updated from @rir.', array('@rir' => strtoupper($rir)))
     );
 
     // Check watchdog
-    $this->drupalGet('admin/reports/dblog');
+    $this->backdropGet('admin/reports/dblog');
     $this->assertText(t('Recent log messages'));
     $this->assertText('ip2country');
     $this->assertLink(t('Manual database update from @rir server.', array('@rir' => strtoupper($rir))));
@@ -232,7 +233,7 @@ class ip2countryTestCase extends DrupalWebTestCase {
     $this->assertText('ip2country');
     $this->assertText(t('Manual database update from @rir server.', array('@rir' => strtoupper($rir))));
 
-    $this->drupalLogout();
+    $this->backdropLogout();
   }
 
   /**
@@ -338,7 +339,7 @@ class ip2countryTestCase extends DrupalWebTestCase {
     $edit = array(
       'ip2country_watchdog' => array('test' => TRUE),
     );
-    //$this->drupalPost(
+    //$this->backdropPost(
     //  'admin/store/settings/countries/edit',
     //  $edit,
     //  t('Import')
@@ -349,17 +350,6 @@ class ip2countryTestCase extends DrupalWebTestCase {
     //);
 
     $this->pass(t('testDBUpdateLogging passed.'));
-  }
-
-  /**
-   * Overrides DrupalWebTestCase::tearDown().
-   */
-  function tearDown() {
-    // Perform any clean-up tasks.
-    variable_del('ip2country_populate_database_on_install');
-
-    // Finally...
-    parent::tearDown();
   }
 
 }

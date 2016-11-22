@@ -1,7 +1,7 @@
 name = IP-based determination of Country
 description = Determines country the user is located in, based on IP address.
 package = Location
-core = 7.x
+backdrop = 1.x
+type = module
 
 configure = admin/config/people/ip2country
-files[] = tests/ip2country.test

@@ -28,7 +28,10 @@
  *   rows in the updated database.
  */
 function ip2country_update_database($registry = 'arin') {
-  $registry = drupal_strtolower(trim($registry));
+  $registry = backdrop_strtolower(trim($registry));
+
+  $config = config('ip2country.settings');
+  $update_batch = $config->get('update_batch');
 
   // FTP files.
   if ($registry == 'afrinic') {
@@ -49,7 +52,7 @@ function ip2country_update_database($registry = 'arin') {
   }
 
   // Set a run-time long enough so the script won't break.
-  drupal_set_time_limit(10*60);  // 10 minutes!
+  backdrop_set_time_limit(10*60);  // 10 minutes!
 
   // Load all the new data into a temporary table so the module still works
   // while we're downloading and validating the new data.
@@ -58,7 +61,7 @@ function ip2country_update_database($registry = 'arin') {
   db_drop_table('ip2country_temp');
 
   // Obtain schema for {ip2country} table.
-  $schema = drupal_get_schema('ip2country', 'ip2country');
+  $schema = backdrop_get_schema('ip2country', 'ip2country');
 
   // Create an empty table identical to the {ip2country} table.
   db_create_table('ip2country_temp', $schema);
@@ -79,16 +82,16 @@ function ip2country_update_database($registry = 'arin') {
     $txt = _ip2country_fetch_page($ftp_file);
     if ($txt == FALSE) {
       // Fetch failed.
-      watchdog('ip2country', 'File empty or not found on @registry server: @ftp_file', array('@registry' => drupal_strtoupper($registry), '@ftp_file' => $ftp_file), WATCHDOG_WARNING);
+      watchdog('ip2country', 'File empty or not found on @registry server: @ftp_file', array('@registry' => backdrop_strtoupper($registry), '@ftp_file' => $ftp_file), WATCHDOG_WARNING);
       return FALSE;
     }
 
-    if (variable_get('ip2country_md5_checksum', FALSE)) {
+    if (config_get('ip2country.settings', 'md5_checksum')) {
       // Fetch the MD5 checksum using cURL.
       $md5 = _ip2country_fetch_page($ftp_file . '.md5');
       if ($md5 == FALSE) {
         // Fetch failed.
-        watchdog('ip2country', 'File not found on @registry server: @ftp_file.md5', array('@registry' => drupal_strtoupper($registry), '@ftp_file' => $ftp_file), WATCHDOG_WARNING);
+        watchdog('ip2country', 'File not found on @registry server: @ftp_file.md5', array('@registry' => backdrop_strtoupper($registry), '@ftp_file' => $ftp_file), WATCHDOG_WARNING);
         return FALSE;
       }
 
@@ -103,7 +106,7 @@ function ip2country_update_database($registry = 'arin') {
         // Checksums don't agree, so drop temporary table,
         // add watchdog entry, then return error.
         db_drop_table('ip2country_temp');
-        watchdog('ip2country', 'Validation of database from @registry server FAILED. MD5 checksum provided for the @ftp_file registry database does not match the calculated checksum.', array('@registry' => drupal_strtoupper($registry), '@ftp_file' => $ftp_file), WATCHDOG_WARNING);
+        watchdog('ip2country', 'Validation of database from @registry server FAILED. MD5 checksum provided for the @ftp_file registry database does not match the calculated checksum.', array('@registry' => backdrop_strtoupper($registry), '@ftp_file' => $ftp_file), WATCHDOG_WARNING);
         return FALSE;
       }
     }
@@ -113,6 +116,9 @@ function ip2country_update_database($registry = 'arin') {
     unset($txt);  // Free up memory.
 
     // Loop over records.
+    // Create query
+    $insert = db_insert('ip2country_temp')->fields(array('ip_range_first', 'ip_range_last', 'ip_range_length', 'country', 'registry'));
+
     $summary_not_found = TRUE;
     foreach ($lines as $line) {
       // Trim each line for security.
@@ -150,16 +156,21 @@ function ip2country_update_database($registry = 'arin') {
       $range_length = (int) $parts[4];
 
       // Insert range into the temporary table.
-      db_insert('ip2country_temp')->fields(array(
-                'ip_range_first'  => min($ip_start, $ip_end),
-                'ip_range_last'   => max($ip_start, $ip_end),
-                'ip_range_length' => $range_length,
-                'country'         => $country_code,
-                'registry'        => $owner_registry,
+      $insert->values(array(
+        'ip_range_first'  => min($ip_start, $ip_end),
+        'ip_range_last'   => max($ip_start, $ip_end),
+        'ip_range_length' => $range_length,
+        'country'         => $country_code,
+        'registry'        => $owner_registry
         )
-      )->execute();
+      );
+
+      if($entries > 0 && ($entries % $update_batch == 0)){
+        $insert->execute();
+      }
       $entries++;
     }
+    $insert->execute();
     unset($lines);  // Free up memory.
   }
 
@@ -184,8 +195,9 @@ function ip2country_update_database($registry = 'arin') {
     unset($txn); // Commit transaction.
 
     // Record the time of update.
-    variable_set('ip2country_last_update', REQUEST_TIME);
-    variable_set('ip2country_last_update_rir', $registry);
+    $config->set('last_update', REQUEST_TIME);
+    $config->set('last_update_rir', backdrop_strtoupper($registry));
+    $config->save();
 
     // Return count of records in the table.
     return $entries;
@@ -194,7 +206,7 @@ function ip2country_update_database($registry = 'arin') {
     // Validation failed, so drop temporary table, add watchdog entry,
     // then return error.
     db_drop_table('ip2country_temp');
-    watchdog('ip2country', 'Validation of database from @registry server FAILED. Server summary reported @summary rows available, but @entries rows were entered into the database.', array('@registry' => drupal_strtoupper($registry), '@summary' => $summary_records, '@entries' => $entries), WATCHDOG_WARNING);
+    watchdog('ip2country', 'Validation of database from @registry server FAILED. Server summary reported @summary rows available, but @entries rows were entered into the database.', array('@registry' => backdrop_strtoupper($registry), '@summary' => $summary_records, '@entries' => $entries), WATCHDOG_WARNING);
     return FALSE;
   }
 }
@@ -216,7 +228,7 @@ function _ip2country_fetch_page($url) {
   // Fetch requested file.
   curl_setopt($curl, CURLOPT_URL, $url);
   curl_setopt($curl, CURLOPT_TIMEOUT, 60*2);
-  curl_setopt($curl, CURLOPT_USERAGENT, 'Drupal (+http://drupal.org/)');
+  curl_setopt($curl, CURLOPT_USERAGENT, 'Backdrop (+http://backdrop.org/)');
   curl_setopt($curl, CURLOPT_HEADER, FALSE);
   curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
   curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);

@@ -3,7 +3,7 @@
  * Styles for ip2country module.
  */
 #dbthrobber.working {
-  background-image: url(/misc/throbber.gif);
+  background-image: url(/core/misc/throbber.gif);
   background-repeat: no-repeat;
   background-position: 100% -20px; /* 20px = half height of throbber */
   color: green;

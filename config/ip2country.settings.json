@@ -1,0 +1,13 @@
+{
+    "_config_name": "ip2country.settings",
+	"debug": "false",
+	"test_type": 0,
+	"test_ip_address": "",
+	"test_country": "",
+	"rir": "arin",
+	"last_update": 0,
+	"update_interval": 604800,
+	"update_batch": 500,
+	"update_database": "",
+	"watchdog": 1
+}
