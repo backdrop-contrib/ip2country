@@ -290,6 +290,7 @@ function ip2country_admin_settings() {
  */
 function ip2country_admin_settings_submit($form, &$form_state) {
   global $user;
+  $user = entity_load('user', $user->uid);
   $config = config('ip2country.settings');
 
   form_state_values_clean($form_state);

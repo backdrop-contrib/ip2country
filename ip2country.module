@@ -32,7 +32,6 @@
  * Backdrop Hooks                                                               *
  ******************************************************************************/
 
-
 /**
  * Implements hook_permission().
  */
@@ -141,7 +140,8 @@ function ip2country_user_login(&$edit, &$account) {
   // Finally, save country, if it has been determined.
   if ($country_code) {
     // Store the ISO country code in the $user object.
-    user_save($account, array('country_iso_code_2' => $country_code));
+    $account->country_iso_code_2 = $country_code;
+    user_save($account);
   }
 }
 
@@ -151,9 +151,9 @@ function ip2country_user_login(&$edit, &$account) {
  *
  * Takes care of storing country data into {users}.data.
  */
-function ip2country_user_presave(&$edit, $account, $category) {
-  if (isset($edit['country_iso_code_2'])) {
-    $edit['data']['country_iso_code_2'] = $edit['country_iso_code_2'];
+function ip2country_user_presave($account) {
+  if (isset($account->country_iso_code_2)) {
+    $account->data['country_iso_code_2'] = $account->country_iso_code_2;
   }
 }
 
